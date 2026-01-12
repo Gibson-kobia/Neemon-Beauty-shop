@@ -3,13 +3,23 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --champagne-gold: #d4af37;
+  --nude-blush: #f4e1d2;
+  --ivory-white: #f8f6f2;
+  --deep-cocoa: #4a2e2a;
+  --charcoal-black: #0a0a0a;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-gold: var(--champagne-gold);
+  --color-blush: var(--nude-blush);
+  --color-ivory: var(--ivory-white);
+  --color-cocoa: var(--deep-cocoa);
+  --color-charcoal: var(--charcoal-black);
+  --font-serif: var(--font-heading);
+  --font-sans: var(--font-body);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,5 +32,11 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, -apple-system, Segoe UI, Roboto,
+    Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+html[data-theme="dark"] {
+  --background: #0a0a0a;
+  --foreground: #ededed;
 }
