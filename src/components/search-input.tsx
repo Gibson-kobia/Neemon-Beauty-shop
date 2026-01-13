@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -8,8 +8,8 @@ import { products } from "../lib/products";
 import { Product } from "../lib/types";
 
 export function SearchInput({ className }: { className?: string }) {
+  const blur = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'><rect width='100%' height='100%' fill='%23f5e7c6'/></svg>";
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<Product[]>([]);
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -27,14 +27,10 @@ export function SearchInput({ className }: { className?: string }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  useEffect(() => {
-    if (!query.trim()) {
-      setResults([]);
-      return;
-    }
-
-    const q = query.toLowerCase();
-    const hits = products
+  const results = useMemo<Product[]>(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return [];
+    return products
       .filter(
         (p) =>
           p.name.toLowerCase().includes(q) ||
@@ -42,7 +38,6 @@ export function SearchInput({ className }: { className?: string }) {
           p.category.toLowerCase().includes(q)
       )
       .slice(0, 5);
-    setResults(hits);
   }, [query]);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -102,9 +97,16 @@ export function SearchInput({ className }: { className?: string }) {
                 >
                   <div className="relative w-8 h-10 flex-shrink-0 rounded overflow-hidden">
                     <Image
-                      src={product.image || "/product-placeholder.png"}
+                      src={
+                        product.image && product.image.startsWith("http")
+                          ? product.image
+                          : "/product-placeholder.png"
+                      }
                       alt={product.name}
                       fill
+                      sizes="32px"
+                      placeholder="blur"
+                      blurDataURL={blur}
                       className="object-cover"
                     />
                   </div>
@@ -124,7 +126,7 @@ export function SearchInput({ className }: { className?: string }) {
                   onClick={() => setOpen(false)}
                   className="block px-3 py-2 text-sm text-center text-[color:var(--champagne-gold)] hover:underline"
                 >
-                  See all results for "{query}"
+                  See all results for &quot;{query}&quot;
                 </Link>
               </div>
             </div>

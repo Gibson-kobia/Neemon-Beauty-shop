@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { CartProvider, useCart } from "./cart/cart-provider";
@@ -37,6 +37,7 @@ function CartButton() {
     (sum, l) => sum + (l.product?.priceKes || 0) * l.qty,
     0
   );
+  const blur = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'><rect width='100%' height='100%' fill='%23f5e7c6'/></svg>";
   return (
     <div className="relative">
       <button
@@ -84,9 +85,16 @@ function CartButton() {
                 <div key={l.product!.id} className="flex items-center gap-3">
                   <div className="relative w-10 h-12 rounded-md overflow-hidden">
                     <Image
-                      src={l.product!.image || "/product-placeholder.png"}
+                      src={
+                        l.product!.image && l.product!.image.startsWith("http")
+                          ? l.product!.image
+                          : "/product-placeholder.png"
+                      }
                       alt={l.product!.name}
                       fill
+                      sizes="40px"
+                      placeholder="blur"
+                      blurDataURL={blur}
                       className="object-cover"
                     />
                   </div>
@@ -133,6 +141,13 @@ function CartButton() {
 
 function Shell({ children }: { children: React.ReactNode }) {
   const { user, logout } = useAuth();
+  const [isDark, setIsDark] = useState(() => {
+    if (typeof document === "undefined") return false;
+    const attr = document.documentElement.getAttribute("data-theme");
+    const stored = typeof window !== "undefined" ? localStorage.getItem("theme") : null;
+    const current = stored || attr || "light";
+    return current === "dark";
+  });
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <header className="sticky top-0 z-40 backdrop-blur bg-white/85 dark:bg-black/70">
@@ -169,13 +184,13 @@ function Shell({ children }: { children: React.ReactNode }) {
               <>
                 <Link
                   href="/auth/login"
-                  className="rounded-full px-3 py-2 border border-black/10 dark:border-white/10 transition-colors hover:bg-black/5 dark:hover:bg-white/10"
+                  className="rounded-xl px-4 py-3 min-h-12 border border-black/10 dark:border-white/10 transition-colors hover:bg-black/5 dark:hover:bg-white/10"
                 >
                   Login
                 </Link>
                 <Link
                   href="/auth/signup"
-                  className="rounded-full px-3 py-2 bg-[color:var(--champagne-gold)] text-white hover:opacity-90"
+                  className="rounded-xl px-4 py-3 min-h-12 min-w-[128px] bg-[color:var(--champagne-gold)] text-white text-center hover:opacity-90"
                 >
                   Sign up
                 </Link>
@@ -183,16 +198,19 @@ function Shell({ children }: { children: React.ReactNode }) {
             )}
             <CartButton />
             <button
-              className="rounded-full px-3 py-2 border border-black/10 dark:border-white/10 transition-colors hover:bg-black/5 dark:hover:bg-white/10"
+              aria-label="Dark Mode"
+              aria-pressed={isDark}
+              className="rounded-xl px-4 py-3 min-h-12 border border-black/10 dark:border-white/10 transition-colors hover:bg-black/5 dark:hover:bg-white/10"
               onClick={() => {
                 const html = document.documentElement;
                 const next =
                   html.getAttribute("data-theme") === "dark" ? "light" : "dark";
                 html.setAttribute("data-theme", next);
                 localStorage.setItem("theme", next);
+                setIsDark(next === "dark");
               }}
             >
-              Toggle
+              Dark Mode
             </button>
           </nav>
         </div>

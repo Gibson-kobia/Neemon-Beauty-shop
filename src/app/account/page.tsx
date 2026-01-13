@@ -1,10 +1,11 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { products } from "../../lib/products";
 import { useAuth } from "../../components/auth/auth-provider";
 import { getSupabase } from "../../lib/supabase";
 
 type User = {
+  id: string;
   name: string;
   email: string;
   phone: string;
@@ -78,15 +79,7 @@ export default function AccountPage() {
     return () => window.removeEventListener("storage", onStorage);
   }, [user]);
 
-  useEffect(() => {
-    setProfileDraft(user);
-    const rawAddr = localStorage.getItem("neemonAddresses");
-    const allAddr = rawAddr ? (JSON.parse(rawAddr) as Address[]) : [];
-    setAddresses(user ? allAddr.filter((a) => a.userId === user.id) : []);
-    const rawRev = localStorage.getItem("neemonReviews");
-    const allRev = rawRev ? (JSON.parse(rawRev) as Review[]) : [];
-    setReviews(user ? allRev.filter((r) => r.userId === user.id) : []);
-  }, [user]);
+  // Derived initial states set via useState initializers; storage listener updates on changes
 
   useEffect(() => {
     let active = true;
@@ -104,8 +97,15 @@ export default function AccountPage() {
         setOrders([]);
         return;
       }
+      type RawOrder = {
+        id: string;
+        total: number;
+        status: string;
+        created_at: string;
+        items?: { productId: string; qty: number }[];
+      };
       const mapped: Order[] =
-        (data || []).map((o: any) => ({
+        ((data || []) as RawOrder[]).map((o) => ({
           id: o.id,
           total: o.total,
           status: o.status,
@@ -265,8 +265,8 @@ export default function AccountPage() {
                 <button
                   onClick={() => {
                     const raw = localStorage.getItem("neemonUsers");
-                    const users = raw ? JSON.parse(raw) : [];
-                    const idx = users.findIndex((u: any) => u.id === user.id);
+                    const users = raw ? (JSON.parse(raw) as User[]) : [];
+                    const idx = users.findIndex((u: User) => u.id === user.id);
                     if (idx >= 0 && profileDraft) {
                       users[idx] = { ...users[idx], name: profileDraft.name, phone: profileDraft.phone };
                       localStorage.setItem("neemonUsers", JSON.stringify(users));

@@ -3,11 +3,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { products } from "../../lib/products";
 import { useCart } from "../../components/cart/cart-provider";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 
 export default function CartPage() {
   const { items: cart, setQty, removeItem, addItem } = useCart();
   const [delivery, setDelivery] = useState<"nairobi" | "kenya">("nairobi");
+  const blur = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'><rect width='100%' height='100%' fill='%23f5e7c6'/></svg>";
 
   const items = cart
     .map((c) => ({ ...c, product: products.find((p) => p.id === c.productId) }))
@@ -18,12 +19,10 @@ export default function CartPage() {
     return delivery === "nairobi" ? "Same‑day via bodaboda" : "1‑3 days via courier";
   }, [delivery]);
 
-  const [wishlistIds, setWishlistIds] = useState<string[]>([]);
-
-  useEffect(() => {
-    const raw = localStorage.getItem("wishlist");
-    if (raw) setWishlistIds(JSON.parse(raw));
-  }, []);
+  const [wishlistIds, setWishlistIds] = useState<string[]>(() => {
+    const raw = typeof window !== "undefined" ? localStorage.getItem("wishlist") : null;
+    return raw ? (JSON.parse(raw) as string[]) : [];
+  });
 
   const saveForLater = (id: string) => {
     const current = cart.find((c) => c.productId === id);
@@ -82,9 +81,16 @@ export default function CartPage() {
               >
                 <div className="relative w-20 h-24 rounded-md overflow-hidden">
                   <Image
-                    src={i.product?.image || "/product-placeholder.png"}
+                    src={
+                      i.product?.image && i.product?.image.startsWith("http")
+                        ? i.product?.image
+                        : "/product-placeholder.png"
+                    }
                     alt={i.product?.name || ""}
                     fill
+                    sizes="80px"
+                    placeholder="blur"
+                    blurDataURL={blur}
                     className="object-cover"
                   />
                 </div>
@@ -136,9 +142,16 @@ export default function CartPage() {
                       <div className="flex items-center gap-3">
                         <div className="relative w-12 h-16 rounded-md overflow-hidden">
                           <Image
-                            src={p!.image || "/product-placeholder.png"}
+                            src={
+                              p!.image && p!.image.startsWith("http")
+                                ? p!.image
+                                : "/product-placeholder.png"
+                            }
                             alt={p!.name}
                             fill
+                            sizes="64px"
+                            placeholder="blur"
+                            blurDataURL={blur}
                             className="object-cover"
                           />
                         </div>

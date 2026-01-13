@@ -15,7 +15,7 @@ type AuthContextValue = {
   signup: (name: string, email: string, phone: string, password: string) => Promise<{ ok: boolean; error?: string }>;
   login: (email: string, password: string) => Promise<{ ok: boolean; error?: string }>;
   logout: () => void;
-  resetPassword: (email: string, newPassword: string) => Promise<{ ok: boolean; error?: string }>;
+  resetPassword: (email: string, newPassword?: string) => Promise<{ ok: boolean; error?: string }>;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -71,7 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         getSupabase().auth.signOut();
         setUser(null);
       },
-      resetPassword: async (email, _newPassword) => {
+      resetPassword: async (email) => {
         const { error } = await getSupabase().auth.resetPasswordForEmail(email);
         if (error) return { ok: false, error: error.message };
         return { ok: true };

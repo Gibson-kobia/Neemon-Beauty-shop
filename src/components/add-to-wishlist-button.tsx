@@ -9,15 +9,18 @@ export function AddToWishlistButton({
   productId: string;
   className?: string;
 }) {
-  const [added, setAdded] = useState(false);
+  const [added, setAdded] = useState<boolean>(() => {
+    const raw = typeof window !== "undefined" ? localStorage.getItem("wishlist") : null;
+    if (!raw) return false;
+    try {
+      const ids = JSON.parse(raw) as string[];
+      return ids.includes(productId);
+    } catch {
+      return false;
+    }
+  });
 
   useEffect(() => {
-    const raw = localStorage.getItem("wishlist");
-    if (raw) {
-      const ids = JSON.parse(raw) as string[];
-      setAdded(ids.includes(productId));
-    }
-
     const onStorage = (e: StorageEvent) => {
       if (e.key === "wishlist" && e.newValue) {
         const ids = JSON.parse(e.newValue) as string[];
@@ -59,4 +62,3 @@ export function AddToWishlistButton({
     </button>
   );
 }
-

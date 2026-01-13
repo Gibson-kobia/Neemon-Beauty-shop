@@ -17,16 +17,18 @@ export default function Home() {
             <p className="mt-4 text-zinc-700 dark:text-zinc-300">
               Authentic brands. Inclusive glam. Nairobi same‑day delivery.
             </p>
-            <div className="mt-8 flex gap-4">
+            <div className="mt-8 flex gap-3 sm:gap-4 flex-col sm:flex-row">
               <Link
                 href="/category/makeup"
-                className="rounded-full px-6 py-3 bg-[color:var(--champagne-gold)] text-white transition-opacity hover:opacity-90"
+                aria-label="Shop New Arrivals"
+                className="inline-flex items-center justify-center rounded-xl px-6 py-3 sm:px-7 sm:py-3.5 min-h-12 bg-[color:var(--champagne-gold)] text-white text-sm sm:text-base tracking-[0.02em] transition-all hover:opacity-90 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--champagne-gold)] focus-visible:ring-offset-2"
               >
                 Shop New Arrivals
               </Link>
               <Link
                 href="/shade-quiz"
-                className="rounded-full px-6 py-3 border border-black/10 dark:border-white/10"
+                aria-label="Find Your Shade"
+                className="inline-flex items-center justify-center rounded-xl px-6 py-3 sm:px-7 sm:py-3.5 min-h-12 border border-black/10 dark:border-white/10 text-sm sm:text-base tracking-[0.02em] transition-all hover:bg-black/5 dark:hover:bg-white/10 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--champagne-gold)] focus-visible:ring-offset-2"
               >
                 Find Your Shade
               </Link>
@@ -84,20 +86,13 @@ export default function Home() {
           </p>
           <Link
             href="/shade-quiz"
-            className="mt-4 inline-block rounded-full px-4 py-2 border"
+            aria-label="Try the shade quiz"
+            className="mt-4 inline-flex items-center justify-center rounded-xl px-4 py-3 min-h-12 border text-sm tracking-[0.02em] transition-all hover:bg-black/5 dark:hover:bg-white/10 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--champagne-gold)] focus-visible:ring-offset-2"
           >
             Try the shade quiz
           </Link>
         </div>
-        <div className="rounded-xl border p-6 bg-white dark:bg-black">
-          <div className="font-serif text-xl">Customer Reviews</div>
-          <div className="mt-3 text-sm text-zinc-600 dark:text-zinc-400">
-            “Top‑tier service, authentic products.” — Wanjiru, Nairobi
-          </div>
-          <div className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-            “Same‑day delivery saved my event.” — Amina, Kileleshwa
-          </div>
-        </div>
+        <div className="rounded-xl border p-6 bg-white dark:bg-black"></div>
       </section>
 
       <section className="mt-12 rounded-xl border p-6 bg-white dark:bg-black">

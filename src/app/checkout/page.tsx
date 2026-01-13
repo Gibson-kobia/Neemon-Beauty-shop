@@ -38,7 +38,14 @@ export default function CheckoutPage() {
   });
   const [error, setError] = useState<string | null>(null);
   const [placed, setPlaced] = useState(false);
-  const [savedAddresses, setSavedAddresses] = useState<{ id: string; label: string; addressText: string }[]>([]);
+  const savedAddresses = useMemo<{ id: string; label: string; addressText: string }[]>(() => {
+    if (!user) return [];
+    const raw = typeof window !== "undefined" ? localStorage.getItem("neemonAddresses") : null;
+    const all = raw ? (JSON.parse(raw) as { id: string; userId: string; label: string; addressText: string }[]) : [];
+    return all
+      .filter((a) => a.userId === user.id)
+      .map(({ id, label, addressText }) => ({ id, label, addressText }));
+  }, [user]);
 
   useEffect(() => {
     const handleStorage = (e: StorageEvent) => {
@@ -56,16 +63,7 @@ export default function CheckoutPage() {
     return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
-  useEffect(() => {
-    if (!user) {
-      setSavedAddresses([]);
-      return;
-    }
-    const raw = localStorage.getItem("neemonAddresses");
-    const all = raw ? JSON.parse(raw) : [];
-    const mine = all.filter((a: any) => a.userId === user.id);
-    setSavedAddresses(mine);
-  }, [user]);
+  // savedAddresses derived from localStorage and current user
 
   const items = useMemo(() => {
     return cart
