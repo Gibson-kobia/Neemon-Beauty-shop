@@ -4,6 +4,7 @@ import Link from "next/link";
 import { products } from "../../lib/products";
 import { MapDeliverySelector } from "../../components/map-delivery-selector";
 import { useAuth } from "../../components/auth/auth-provider";
+import { getSupabase } from "../../lib/supabase";
 
 type CartItem = { productId: string; qty: number };
 type DeliveryLocation = {
@@ -108,9 +109,7 @@ export default function CheckoutPage() {
       setIsPaying(false);
     }
 
-    const ordersRaw = localStorage.getItem("neemonOrders");
-    const orders = ordersRaw ? JSON.parse(ordersRaw) : [];
-    orders.push({
+    const order = {
       id: `ORD-${crypto.randomUUID()}`,
       total,
       status: paymentMode === "mpesa" ? "Paid" : "Processing",
@@ -118,13 +117,19 @@ export default function CheckoutPage() {
         productId: i.product.id,
         qty: i.qty,
       })),
-      addressText: hasAddress ? addressText.trim() : undefined,
-      deliveryLocation: hasMap ? mapSelected : undefined,
-      createdAt: new Date().toISOString(),
+      address_text: hasAddress ? addressText.trim() : null,
+      delivery_location: hasMap ? mapSelected : null,
+      created_at: new Date().toISOString(),
       payment: paymentMode,
       method: deliveryMethod,
-    });
-    localStorage.setItem("neemonOrders", JSON.stringify(orders));
+      user_id: user ? user.id : null,
+      mpesa_phone: paymentMode === "mpesa" ? mpesaPhone : null,
+    };
+    const { error: insertError } = await getSupabase().from("orders").insert([order]);
+    if (insertError) {
+      setError(insertError.message);
+      return;
+    }
     localStorage.setItem("cart", JSON.stringify([]));
     setPlaced(true);
   };

@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { products } from "../../lib/products";
 import { useAuth } from "../../components/auth/auth-provider";
+import { getSupabase } from "../../lib/supabase";
 
 type User = {
   name: string;
@@ -36,11 +37,7 @@ type Review = {
 export default function AccountPage() {
   const { user, logout } = useAuth();
   const [section, setSection] = useState<"profile" | "addresses" | "orders" | "wishlist" | "reviews">("profile");
-  const [orders, setOrders] = useState<Order[]>(() => {
-    if (typeof window === "undefined") return [];
-    const ordersRaw = localStorage.getItem("neemonOrders");
-    return ordersRaw ? JSON.parse(ordersRaw) : [];
-  });
+  const [orders, setOrders] = useState<Order[]>([]);
   const [wishlistIds, setWishlistIds] = useState<string[]>(() => {
     if (typeof window === "undefined") return [];
     const wishlistRaw = localStorage.getItem("wishlist");
@@ -65,9 +62,6 @@ export default function AccountPage() {
 
   useEffect(() => {
     const onStorage = (e: StorageEvent) => {
-      if (e.key === "neemonOrders" && e.newValue) {
-        setOrders(JSON.parse(e.newValue));
-      }
       if (e.key === "wishlist" && e.newValue) {
         setWishlistIds(JSON.parse(e.newValue));
       }
@@ -92,6 +86,38 @@ export default function AccountPage() {
     const rawRev = localStorage.getItem("neemonReviews");
     const allRev = rawRev ? (JSON.parse(rawRev) as Review[]) : [];
     setReviews(user ? allRev.filter((r) => r.userId === user.id) : []);
+  }, [user]);
+
+  useEffect(() => {
+    let active = true;
+    async function loadOrders() {
+      if (!user) {
+        setOrders([]);
+        return;
+      }
+      const { data, error } = await getSupabase()
+        .from("orders")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
+      if (error) {
+        setOrders([]);
+        return;
+      }
+      const mapped: Order[] =
+        (data || []).map((o: any) => ({
+          id: o.id,
+          total: o.total,
+          status: o.status,
+          createdAt: o.created_at,
+          items: o.items || [],
+        })) || [];
+      if (active) setOrders(mapped);
+    }
+    loadOrders();
+    return () => {
+      active = false;
+    };
   }, [user]);
 
   if (!user) {

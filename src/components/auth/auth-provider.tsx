@@ -1,14 +1,7 @@
 "use client";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-
-type StoredUser = {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  passwordHash: string;
-  salt: string;
-};
+import { getSupabase } from "../../lib/supabase";
+import type { User } from "@supabase/supabase-js";
 
 type PublicUser = {
   id: string;
@@ -27,95 +20,60 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
-async function hashPassword(salt: string, password: string) {
-  const enc = new TextEncoder();
-  const data = enc.encode(salt + password);
-  const digest = await crypto.subtle.digest("SHA-256", data);
-  const bytes = Array.from(new Uint8Array(digest));
-  return bytes.map((b) => b.toString(16).padStart(2, "0")).join("");
-}
-
-function getUsers(): StoredUser[] {
-  const raw = typeof window !== "undefined" ? localStorage.getItem("neemonUsers") : null;
-  return raw ? (JSON.parse(raw) as StoredUser[]) : [];
-}
-
-function setUsers(users: StoredUser[]) {
-  localStorage.setItem("neemonUsers", JSON.stringify(users));
-}
-
-function toPublic(u: StoredUser): PublicUser {
-  return { id: u.id, name: u.name, email: u.email, phone: u.phone };
+function toPublicFromSupabase(u: User): PublicUser {
+  return {
+    id: u.id,
+    name: (u.user_metadata?.name as string) || "",
+    email: u.email || "",
+    phone: (u.user_metadata?.phone as string) || "",
+  };
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<PublicUser | null>(() => {
-    if (typeof window === "undefined") return null;
-    const raw = localStorage.getItem("neemonUser");
-    return raw ? (JSON.parse(raw) as PublicUser) : null;
-  });
+  const [user, setUser] = useState<PublicUser | null>(null);
 
   useEffect(() => {
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === "neemonUser" && e.newValue) {
-        setUser(JSON.parse(e.newValue));
-      }
-      if (e.key === "neemonUser" && e.newValue === null) {
-        setUser(null);
-      }
+    let mounted = true;
+    getSupabase().auth.getUser().then((res) => {
+      const u = res.data.user;
+      if (mounted) setUser(u ? toPublicFromSupabase(u) : null);
+    });
+    const { data: sub } = getSupabase().auth.onAuthStateChange((_event, session) => {
+      const u = session?.user || null;
+      setUser(u ? toPublicFromSupabase(u) : null);
+    });
+    return () => {
+      mounted = false;
+      sub?.subscription.unsubscribe();
     };
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
   }, []);
 
   const value = useMemo<AuthContextValue>(() => {
     return {
       user,
       signup: async (name, email, phone, password) => {
-        const users = getUsers();
-        if (users.find((u) => u.email.toLowerCase() === email.toLowerCase())) {
-          return { ok: false, error: "Email already registered" };
-        }
-        const saltBytes = new Uint8Array(16);
-        crypto.getRandomValues(saltBytes);
-        const salt = Array.from(saltBytes).map((b) => b.toString(16).padStart(2, "0")).join("");
-        const passwordHash = await hashPassword(salt, password);
-        const id = crypto.randomUUID();
-        const stored: StoredUser = { id, name, email, phone, passwordHash, salt };
-        setUsers([...users, stored]);
-        const pub = toPublic(stored);
-        localStorage.setItem("neemonUser", JSON.stringify(pub));
-        localStorage.setItem("neemonSession", JSON.stringify({ token: crypto.randomUUID(), userId: id }));
-        setUser(pub);
+        const { data, error } = await getSupabase().auth.signUp({
+          email,
+          password,
+          options: { data: { name, phone } },
+        });
+        if (error) return { ok: false, error: error.message };
+        if (data.user) setUser(toPublicFromSupabase(data.user));
         return { ok: true };
       },
       login: async (email, password) => {
-        const users = getUsers();
-        const u = users.find((x) => x.email.toLowerCase() === email.toLowerCase());
-        if (!u) return { ok: false, error: "Invalid credentials" };
-        const computed = await hashPassword(u.salt, password);
-        if (computed !== u.passwordHash) return { ok: false, error: "Invalid credentials" };
-        const pub = toPublic(u);
-        localStorage.setItem("neemonUser", JSON.stringify(pub));
-        localStorage.setItem("neemonSession", JSON.stringify({ token: crypto.randomUUID(), userId: u.id }));
-        setUser(pub);
+        const { data, error } = await getSupabase().auth.signInWithPassword({ email, password });
+        if (error) return { ok: false, error: error.message };
+        if (data.user) setUser(toPublicFromSupabase(data.user));
         return { ok: true };
       },
       logout: () => {
-        localStorage.removeItem("neemonUser");
-        localStorage.removeItem("neemonSession");
+        getSupabase().auth.signOut();
         setUser(null);
       },
-      resetPassword: async (email, newPassword) => {
-        const users = getUsers();
-        const idx = users.findIndex((x) => x.email.toLowerCase() === email.toLowerCase());
-        if (idx === -1) return { ok: false, error: "Email not found" };
-        const saltBytes = new Uint8Array(16);
-        crypto.getRandomValues(saltBytes);
-        const salt = Array.from(saltBytes).map((b) => b.toString(16).padStart(2, "0")).join("");
-        const passwordHash = await hashPassword(salt, newPassword);
-        users[idx] = { ...users[idx], salt, passwordHash };
-        setUsers(users);
+      resetPassword: async (email, _newPassword) => {
+        const { error } = await getSupabase().auth.resetPasswordForEmail(email);
+        if (error) return { ok: false, error: error.message };
         return { ok: true };
       },
     };
