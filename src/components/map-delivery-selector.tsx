@@ -54,7 +54,7 @@ export function MapDeliverySelector({
   useEffect(() => {
     let disposed = false;
     async function init() {
-      const L = await import("leaflet");
+      const L: typeof import("leaflet") = await import("leaflet");
       if (!containerRef.current || disposed) return;
       const map = L.map(containerRef.current, {
         center: [initial.current.latitude, initial.current.longitude],
