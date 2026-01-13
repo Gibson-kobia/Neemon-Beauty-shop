@@ -6,21 +6,23 @@ export default function Home() {
   const featured = products.slice(0, 12);
   return (
     <div className="mx-auto max-w-7xl px-6">
-      <section className="relative overflow-hidden rounded-3xl mt-8 bg-[color:var(--ivory-white)] dark:bg-charcoal">
-        <div className="grid md:grid-cols-2">
+      <section className="relative overflow-hidden rounded-3xl mt-8">
+        <div className="absolute inset-0 bg-gradient-to-tr from-[color:var(--nude-blush)] via-[color:var(--champagne-gold)] to-[color:var(--ivory-white)]" />
+        <div className="absolute inset-0 opacity-[0.08]" style={{ backgroundImage: "radial-gradient(1px 1px at 10% 20%, rgba(0,0,0,0.6), transparent 1px), radial-gradient(1px 1px at 80% 70%, rgba(0,0,0,0.6), transparent 1px)" }} />
+        <div className="relative grid md:grid-cols-2">
           <div className="p-10 md:p-16">
-            <div className="font-serif text-4xl md:text-5xl leading-tight">
-              Luxury Beauty, For Every Shade
+            <div className="font-serif text-4xl md:text-5xl leading-tight tracking-[0.02em]">
+              Elevate Your Glow
             </div>
-            <p className="mt-4 text-zinc-600 dark:text-zinc-400">
-              Authentic brands. Inclusive glams. Nairobi same‑day delivery.
+            <p className="mt-4 text-zinc-700 dark:text-zinc-300">
+              Authentic brands. Inclusive glam. Nairobi same‑day delivery.
             </p>
             <div className="mt-8 flex gap-4">
               <Link
                 href="/category/makeup"
-                className="rounded-full px-6 py-3 bg-[color:var(--champagne-gold)] text-white"
+                className="rounded-full px-6 py-3 bg-[color:var(--champagne-gold)] text-white transition-opacity hover:opacity-90"
               >
-                Shop Beauty
+                Shop New Arrivals
               </Link>
               <Link
                 href="/shade-quiz"
@@ -31,29 +33,16 @@ export default function Home() {
             </div>
           </div>
           <div className="p-10 md:p-16">
-            <div className="h-full w-full rounded-2xl bg-[color:var(--nude-blush)] dark:bg-black/50"></div>
+            <div className="h-full w-full rounded-2xl bg-[color:var(--nude-blush)]/60 dark:bg-black/40"></div>
           </div>
         </div>
       </section>
 
-      <section className="mt-12 grid sm:grid-cols-3 gap-6">
-        <div className="rounded-xl p-5 border bg-white dark:bg-black">
-          <div className="font-medium">Authentic products</div>
-          <div className="text-sm text-zinc-600 dark:text-zinc-400">
-            Trusted beauty brands sold in Kenya
-          </div>
-        </div>
-        <div className="rounded-xl p-5 border bg-white dark:bg-black">
-          <div className="font-medium">Secure M‑Pesa payments</div>
-          <div className="text-sm text-zinc-600 dark:text-zinc-400">
-            Pay securely with M‑Pesa and cards
-          </div>
-        </div>
-        <div className="rounded-xl p-5 border bg-white dark:bg-black">
-          <div className="font-medium">Fast delivery</div>
-          <div className="text-sm text-zinc-600 dark:text-zinc-400">
-            Nairobi same‑day, nationwide courier
-          </div>
+      <section className="mt-6">
+        <div className="rounded-full px-4 py-2 text-xs grid grid-cols-3 gap-2 text-center border bg-white dark:bg-black">
+          <div className="opacity-80">Authentic Products</div>
+          <div className="opacity-80">Fast Delivery</div>
+          <div className="opacity-80">Secure Payment</div>
         </div>
       </section>
 

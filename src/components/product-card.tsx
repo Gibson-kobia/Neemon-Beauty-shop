@@ -10,7 +10,7 @@ export function ProductCard({ product }: { product: Product }) {
       <Link href={`/product/${product.slug}`} className="block">
         <div className="relative aspect-[4/5]">
           <Image
-            src={product.image || "/product-placeholder.png"}
+            src={product.image && product.image.startsWith("http") ? product.image : "/product-placeholder.png"}
             alt={product.name}
             fill
             sizes="(max-width: 768px) 100vw, 25vw"

@@ -135,10 +135,10 @@ function Shell({ children }: { children: React.ReactNode }) {
   const { user, logout } = useAuth();
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
-      <header className="sticky top-0 z-40 backdrop-blur bg-white/85 dark:bg-black/70 border-b border-black/10 dark:border-white/10">
+      <header className="sticky top-0 z-40 backdrop-blur bg-white/85 dark:bg-black/70">
         <div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between gap-6">
           <Link href="/" className="group flex-shrink-0">
-            <span className="font-serif text-2xl tracking-wide">NEEMON</span>
+            <span className="font-serif text-2xl tracking-[0.04em]">NEEMON</span>
             <span className="hidden lg:inline ml-2 text-sm text-zinc-500 group-hover:text-zinc-700 dark:text-zinc-400">
               BEAUTY SHOP & COSMETICS
             </span>
@@ -147,20 +147,20 @@ function Shell({ children }: { children: React.ReactNode }) {
           <SearchInput className="hidden md:block flex-1 max-w-md mx-4" />
           
           <nav className="flex items-center gap-4 sm:gap-6 text-sm">
-            <Link href="/" className="hidden sm:block hover:opacity-80">
+            <Link href="/" className="hidden sm:block transition-opacity duration-200 hover:opacity-80">
               Home
             </Link>
-            <Link href="/about" className="hidden sm:block hover:opacity-80">
+            <Link href="/about" className="hidden sm:block transition-opacity duration-200 hover:opacity-80">
               About
             </Link>
             {user ? (
               <>
-                <Link href="/account" className="hover:opacity-80">
+                <Link href="/account" className="transition-opacity duration-200 hover:opacity-80">
                   Account
                 </Link>
                 <button
                   onClick={logout}
-                  className="rounded-full px-3 py-2 border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/10"
+                  className="rounded-full px-3 py-2 border border-black/10 dark:border-white/10 transition-colors hover:bg-black/5 dark:hover:bg-white/10"
                 >
                   Logout
                 </button>
@@ -169,7 +169,7 @@ function Shell({ children }: { children: React.ReactNode }) {
               <>
                 <Link
                   href="/auth/login"
-                  className="rounded-full px-3 py-2 border border-black/10 dark:border-white/10 hover:bg_black/5 dark:hover:bg-white/10"
+                  className="rounded-full px-3 py-2 border border-black/10 dark:border-white/10 transition-colors hover:bg-black/5 dark:hover:bg-white/10"
                 >
                   Login
                 </Link>
@@ -183,7 +183,7 @@ function Shell({ children }: { children: React.ReactNode }) {
             )}
             <CartButton />
             <button
-              className="rounded-full px-3 py-2 border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/10"
+              className="rounded-full px-3 py-2 border border-black/10 dark:border-white/10 transition-colors hover:bg-black/5 dark:hover:bg-white/10"
               onClick={() => {
                 const html = document.documentElement;
                 const next =
@@ -199,6 +199,7 @@ function Shell({ children }: { children: React.ReactNode }) {
         <div className="md:hidden px-6 pb-4">
           <SearchInput />
         </div>
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-[color:var(--champagne-gold)] to-transparent opacity-60" />
       </header>
       <main className="flex-1">{children}</main>
       <footer className="border-t border-black/10 dark:border-white/10">
