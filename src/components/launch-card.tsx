@@ -38,7 +38,7 @@ export function LaunchCard() {
         />
         <div className="relative p-8 md:p-12 text-center">
           <div className="font-serif text-2xl md:text-3xl">
-            NEEMON Beauty is Almost Here ✨
+            NEEMON Beauty is Almost Here
           </div>
           <div className="mt-3 text-sm md:text-base text-zinc-700 dark:text-zinc-300">
             We’re curating Kenya’s best beauty brands — makeup, skincare, hair & fragrance — for a luxury shopping experience like no other.
