@@ -163,22 +163,22 @@ function HeroSlider() {
 
   return (
     <section
-      className="relative overflow-hidden rounded-3xl mt-8 min-h-screen"
+      className="relative overflow-hidden rounded-3xl mt-8 min-h-[100svh]"
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
       aria-roledescription="carousel"
       aria-label="NEEMON luxury brand slider"
     >
-      <div className="absolute inset-0 pointer-events-none">
+      <div className="absolute inset-0 pointer-events-none z-0">
         <SlideBackground idx={index} />
       </div>
-      <div className="relative h-full">
+      <div className="relative h-full z-10">
         <div className="absolute inset-0">
           {[0, 1, 2].map((i) => (
             <div
               key={i}
-              className={`absolute inset-0 transition-opacity duration-700 ease-out ${
+              className={`absolute inset-0 transition-opacity duration-700 ease-out z-10 ${
                 index === i ? "opacity-100" : "opacity-0"
               }`}
             >
@@ -190,43 +190,43 @@ function HeroSlider() {
                 <div className="text-center max-w-3xl">
                   {i === 0 && (
                     <>
-                      <div className="font-serif text-5xl md:text-6xl tracking-[0.02em]">Elevate Your Glow</div>
-                      <div className="mt-4 text-sm md:text-base text-zinc-700 dark:text-zinc-300">
-                        Authentic brands. Inclusive glam. Nairobi same‑day delivery.
-                      </div>
+                      <div className="font-serif text-5xl md:text-6xl tracking-[0.02em]">NEEMON Beauty is not a trend. It’s a signature.</div>
                       <div className="mt-8 flex gap-3 justify-center">
-                        <Link href="/category/makeup" className="rounded-xl px-6 py-3 bg-[color:var(--champagne-gold)] text-white">
-                          Shop New Arrivals
+                        <Link href="/" className="rounded-xl px-6 py-3 bg-[color:var(--champagne-gold)] text-white">
+                          Enter NEEMON World
                         </Link>
-                        <Link href="/shade-quiz" className="rounded-xl px-6 py-3 border">
-                          Find Your Shade
+                        <Link href="https://wa.me/254708065140" target="_blank" rel="noopener" className="rounded-xl px-6 py-3 border">
+                          WhatsApp VIP
                         </Link>
                       </div>
                     </>
                   )}
                   {i === 1 && (
                     <>
-                      <div className="font-serif text-4xl md:text-5xl tracking-[0.02em]">Shopping Launching Soon</div>
+                      <div className="font-serif text-4xl md:text-5xl tracking-[0.02em]">Shopping Launching Soon ✨</div>
                       <div className="mt-3 text-lg md:text-xl">Premium Beauty. Delivered to Your Door.</div>
                       <div className="mt-2 text-sm md:text-base text-zinc-700 dark:text-zinc-300">
                         Skincare • Makeup • Hair • Fragrance • Tools
                       </div>
-                      <div className="mt-8">
+                      <div className="mt-8 flex gap-3 justify-center">
                         <Link href="/launch" className="rounded-xl px-6 py-3 border">
                           Get Launch Alerts
+                        </Link>
+                        <Link href="https://wa.me/254708065140" target="_blank" rel="noopener" className="rounded-xl px-6 py-3 border">
+                          WhatsApp VIP
                         </Link>
                       </div>
                     </>
                   )}
                   {i === 2 && (
                     <>
-                      <div className="font-serif text-4xl md:text-5xl tracking-[0.02em]">Designed for Every Shade</div>
-                      <div className="mt-3 text-lg md:text-xl">Created for Confidence</div>
-                      <div className="mt-2 text-sm md:text-base text-zinc-700 dark:text-zinc-300">
+                      <div className="font-serif text-4xl md:text-5xl tracking-[0.02em] text-white">Designed for Every Shade</div>
+                      <div className="mt-3 text-lg md:text-xl text-white">Created for Confidence</div>
+                      <div className="mt-2 text-sm md:text-base text-white/80">
                         Where Kenyan beauty meets modern luxury.
                       </div>
                       <div className="mt-8">
-                        <Link href="/about" className="rounded-xl px-6 py-3 border">
+                        <Link href="/about" className="rounded-xl px-6 py-3 border border-white text-white">
                           Explore the NEEMON Experience
                         </Link>
                       </div>
