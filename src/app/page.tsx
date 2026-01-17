@@ -91,24 +91,55 @@ function HeroSlider() {
   const timerRef = useRef<number | null>(null);
   const touchStartX = useRef<number | null>(null);
   const touchDeltaX = useRef<number>(0);
-
-  useEffect(() => {
-    if (timerRef.current) {
-      window.clearInterval(timerRef.current);
-    }
-    timerRef.current = window.setInterval(() => {
-      setIndex((i) => (i + 1) % 3);
-    }, 7000);
-    return () => {
-      if (timerRef.current) window.clearInterval(timerRef.current);
-    };
-  }, [index]);
+  const mountedRef = useRef(false);
 
   const go = (to: number) => {
     setIndex(((to % 3) + 3) % 3);
+    if (mountedRef.current) {
+      if (timerRef.current) window.clearInterval(timerRef.current);
+      timerRef.current = window.setInterval(() => {
+        setIndex((i) => (i + 1) % 3);
+      }, 7000);
+    }
   };
   const next = () => go(index + 1);
   const prev = () => go(index - 1);
+
+  useEffect(() => {
+    const start = () => {
+      if (timerRef.current) window.clearInterval(timerRef.current);
+      timerRef.current = window.setInterval(() => {
+        setIndex((i) => (i + 1) % 3);
+      }, 7000);
+    };
+    start();
+    mountedRef.current = true;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") {
+        setIndex((i) => ((i - 1 + 3) % 3));
+        if (timerRef.current) {
+          window.clearInterval(timerRef.current);
+          timerRef.current = window.setInterval(() => {
+            setIndex((i) => (i + 1) % 3);
+          }, 7000);
+        }
+      }
+      if (e.key === "ArrowRight") {
+        setIndex((i) => ((i + 1) % 3));
+        if (timerRef.current) {
+          window.clearInterval(timerRef.current);
+          timerRef.current = window.setInterval(() => {
+            setIndex((i) => (i + 1) % 3);
+          }, 7000);
+        }
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      if (timerRef.current) window.clearInterval(timerRef.current);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, []);
 
   const onTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
@@ -136,8 +167,10 @@ function HeroSlider() {
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
+      aria-roledescription="carousel"
+      aria-label="NEEMON luxury brand slider"
     >
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 pointer-events-none">
         <SlideBackground idx={index} />
       </div>
       <div className="relative h-full">
