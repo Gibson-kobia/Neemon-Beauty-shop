@@ -1,5 +1,4 @@
-import { products } from "../../lib/products";
-import { ProductCard } from "../../components/product-card";
+ 
 
 export default function SearchPage({
   searchParams,
@@ -7,15 +6,7 @@ export default function SearchPage({
   searchParams?: { q?: string };
 }) {
   const q = searchParams?.q?.toString() || "";
-  const query = q.trim().toLowerCase();
-  const list = products.filter((p) => {
-    if (!query) return true;
-    return (
-      p.name.toLowerCase().includes(query) ||
-      p.brand.toLowerCase().includes(query) ||
-      p.category.toLowerCase().includes(query)
-    );
-  });
+  
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-8">
@@ -23,12 +14,15 @@ export default function SearchPage({
       <div className="text-sm text-zinc-600 dark:text-zinc-400 mb-6">
         {q ? `Results for “${q}”` : "Browse all products"}
       </div>
-      <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {list.map((p) => (
-          <ProductCard key={p.id} product={p} />
-        ))}
+      <div className="relative rounded-2xl p-10 md:p-16 border bg-white dark:bg-black overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-[color:var(--nude-blush)] via-[color:var(--champagne-gold)] to-[color:var(--ivory-white)] opacity-30" />
+        <div className="relative text-center">
+          <div className="font-serif text-2xl">💄 Our full beauty collection is launching soon</div>
+          <div className="mt-2 text-sm text-zinc-700 dark:text-zinc-300">
+            We are carefully curating the best products for every skin tone and style.
+          </div>
+        </div>
       </div>
     </div>
   );
 }
-

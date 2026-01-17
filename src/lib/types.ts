@@ -14,6 +14,7 @@ export type Product = {
   priceKes: number;
   image: string;
   description: string;
+  stock: number;
   rating: number;
   reviewsCount: number;
 };
