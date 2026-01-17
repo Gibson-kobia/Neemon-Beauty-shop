@@ -158,7 +158,7 @@ export default function CheckoutPage() {
           <div className="rounded-xl border border-black/10 dark:border-white/10 p-6 bg-white dark:bg-black">
             <div className="font-medium">Delivery Details</div>
             <div className="mt-4 space-y-3">
-              <label className="block text_sm">Text address</label>
+              <label className="block text-sm">Text address</label>
               <input
                 value={addressText}
                 onChange={(e) => setAddressText(e.target.value)}
