@@ -73,7 +73,9 @@ export function LaunchCard() {
               </button>
             </div>
             <a
-              href="https://wa.me/254700000000"
+              href="https://wa.me/254708065140?text=Hi%20NEEMON%20Beauty,%20I%20want%20to%20be%20notified%20when%20shopping%20goes%20live."
+              target="_blank"
+              rel="noopener noreferrer"
               className="rounded-xl px-4 py-2 border text-sm text-center"
             >
               WhatsApp
@@ -92,4 +94,3 @@ export function LaunchCard() {
     </div>
   );
 }
-
