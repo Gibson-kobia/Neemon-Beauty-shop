@@ -1,4 +1,6 @@
 import { LaunchCard } from "../../components/launch-card";
-export default function ShadeQuizPage() {
+
+export default function LaunchPage() {
   return <LaunchCard />;
 }
+

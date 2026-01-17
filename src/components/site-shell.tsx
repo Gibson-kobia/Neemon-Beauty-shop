@@ -155,6 +155,20 @@ function Shell({ children }: { children: React.ReactNode }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const trending = ["lipstick", "niacinamide", "wig cap", "yara", "eco gel"];
+  const [hoverTimer, setHoverTimer] = useState<number | null>(null);
+  const openWithDelay = (which: "shop" | "categories") => {
+    if (hoverTimer) {
+      clearTimeout(hoverTimer);
+    }
+    const t = window.setTimeout(() => setMenuOpen(which), 220);
+    setHoverTimer(t);
+  };
+  const cancelHover = () => {
+    if (hoverTimer) {
+      clearTimeout(hoverTimer);
+      setHoverTimer(null);
+    }
+  };
   useEffect(() => {
     const onScroll = () => {
       setSolid(window.scrollY > 8);
@@ -217,25 +231,33 @@ function Shell({ children }: { children: React.ReactNode }) {
           <div className="hidden lg:flex items-center gap-6 text-sm">
             <Link href="/" className="transition-opacity hover:opacity-80">Home</Link>
             <button
-              onMouseEnter={() => setMenuOpen("shop")}
-              onFocus={() => setMenuOpen("shop")}
-              onClick={() => setMenuOpen(menuOpen === "shop" ? null : "shop")}
+              onMouseEnter={() => openWithDelay("shop")}
+              onFocus={() => openWithDelay("shop")}
+              onMouseLeave={cancelHover}
+              onClick={() => {
+                setMenuOpen(null);
+                router.push("/launch");
+              }}
               className="inline-flex items-center gap-1 transition-opacity hover:opacity-80"
             >
               Shop
               <span>▾</span>
             </button>
             <button
-              onMouseEnter={() => setMenuOpen("categories")}
-              onFocus={() => setMenuOpen("categories")}
-              onClick={() => setMenuOpen(menuOpen === "categories" ? null : "categories")}
+              onMouseEnter={() => openWithDelay("categories")}
+              onFocus={() => openWithDelay("categories")}
+              onMouseLeave={cancelHover}
+              onClick={() => {
+                setMenuOpen(null);
+                router.push("/launch");
+              }}
               className="inline-flex items-center gap-1 transition-opacity hover:opacity-80"
             >
               Categories
               <span>▾</span>
             </button>
             <Link href="/shade-quiz" className="transition-opacity hover:opacity-80">Shade Quiz</Link>
-            <Link href="/shop" className="transition-opacity hover:opacity-80">Offers</Link>
+            <Link href="/offers" className="transition-opacity hover:opacity-80">Offers</Link>
             <Link href="/about" className="transition-opacity hover:opacity-80">About</Link>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
@@ -258,66 +280,22 @@ function Shell({ children }: { children: React.ReactNode }) {
         {menuOpen && (
           <div
             onMouseLeave={() => setMenuOpen(null)}
-            className="hidden lg:block border-t border-black/10 dark:border-white/10 bg-white/95 dark:bg-black/90 backdrop-blur"
+            className="hidden lg:block border-t border-black/10 dark:border-white/10 bg-white/95 dark:bg-black/90 backdrop-blur transition-all duration-200"
           >
-            <div className="mx-auto max-w-7xl px-6 py-6 grid grid-cols-5 gap-6">
-              <div>
-                <div className="font-serif mb-2">💄 Makeup</div>
-                <div className="space-y-1 text-sm">
-                  <Link href="/category/makeup" className="block hover:opacity-80">Face</Link>
-                  <Link href="/category/makeup" className="block hover:opacity-80">Eyes</Link>
-                  <Link href="/category/makeup" className="block hover:opacity-80">Lips</Link>
-                  <Link href="/category/makeup" className="block hover:opacity-80">Palettes</Link>
-                </div>
-              </div>
-              <div>
-                <div className="font-serif mb-2">🌸 Skincare</div>
-                <div className="space-y-1 text-sm">
-                  <Link href="/category/skincare" className="block hover:opacity-80">Cleansers</Link>
-                  <Link href="/category/skincare" className="block hover:opacity-80">Toners</Link>
-                  <Link href="/category/skincare" className="block hover:opacity-80">Serums</Link>
-                  <Link href="/category/skincare" className="block hover:opacity-80">Sunscreen</Link>
-                </div>
-              </div>
-              <div>
-                <div className="font-serif mb-2">💇 Hair</div>
-                <div className="space-y-1 text-sm">
-                  <Link href="/category/hair" className="block hover:opacity-80">Wigs</Link>
-                  <Link href="/category/hair" className="block hover:opacity-80">Oils</Link>
-                  <Link href="/category/hair" className="block hover:opacity-80">Relaxers</Link>
-                  <Link href="/category/hair" className="block hover:opacity-80">Shampoos</Link>
-                </div>
-              </div>
-              <div>
-                <div className="font-serif mb-2">🌺 Perfumes</div>
-                <div className="space-y-1 text-sm">
-                  <Link href="/category/perfumes" className="block hover:opacity-80">Women</Link>
-                  <Link href="/category/perfumes" className="block hover:opacity-80">Men</Link>
-                  <Link href="/category/perfumes" className="block hover:opacity-80">Unisex</Link>
-                </div>
-              </div>
-              <div>
-                <div className="font-serif mb-2">🧰 Beauty Tools</div>
-                <div className="space-y-1 text-sm">
-                  <Link href="/category/tools" className="block hover:opacity-80">Brushes</Link>
-                  <Link href="/category/tools" className="block hover:opacity-80">Lashes</Link>
-                  <Link href="/category/tools" className="block hover:opacity-80">Curlers</Link>
-                  <Link href="/category/tools" className="block hover:opacity-80">Mirrors</Link>
-                </div>
-              </div>
-            </div>
-            <div className="mx-auto max-w-7xl px-6 pb-6">
-              <div className="rounded-2xl border p-6 bg-white dark:bg-black grid md:grid-cols-5">
-                <div className="md:col-start-5 md:col-span-1">
-                  <div className="rounded-xl bg-black/5 dark:bg-white/10 aspect-[3/4]" />
-                  <div className="mt-3 text-sm">Featured Brand of the Week</div>
+            <div className="mx-auto max-w-7xl px-6 py-4">
+              <div className="grid sm:grid-cols-3 gap-3 text-sm">
+                {(menuOpen === "shop" ? ["New In", "Bestsellers", "Offers"] : ["Makeup", "Skincare", "Hair", "Perfumes", "Tools"]).map((label) => (
                   <button
-                    onClick={() => router.push("/shop")}
-                    className="mt-2 rounded-full px-4 py-2 bg-[color:var(--champagne-gold)] text-white text-sm"
+                    key={label}
+                    onClick={() => {
+                      setMenuOpen(null);
+                      router.push("/launch");
+                    }}
+                    className="text-left px-3 py-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
                   >
-                    Explore Collection
+                    {label}
                   </button>
-                </div>
+                ))}
               </div>
             </div>
           </div>
@@ -379,10 +357,10 @@ function Shell({ children }: { children: React.ReactNode }) {
             </div>
             <div className="mt-6 flex flex-col gap-3">
               <Link href="/" onClick={() => setMobileOpen(false)}>Home</Link>
-              <Link href="/shop" onClick={() => setMobileOpen(false)}>Shop</Link>
-              <Link href="/category/makeup" onClick={() => setMobileOpen(false)}>Categories</Link>
+              <Link href="/launch" onClick={() => setMobileOpen(false)}>Shop</Link>
+              <Link href="/launch" onClick={() => setMobileOpen(false)}>Categories</Link>
               <Link href="/shade-quiz" onClick={() => setMobileOpen(false)}>Shade Quiz</Link>
-              <Link href="/shop" onClick={() => setMobileOpen(false)}>Offers</Link>
+              <Link href="/offers" onClick={() => setMobileOpen(false)}>Offers</Link>
               <Link href="/about" onClick={() => setMobileOpen(false)}>About</Link>
               <Link href="/account" onClick={() => setMobileOpen(false)}>Account</Link>
             </div>
