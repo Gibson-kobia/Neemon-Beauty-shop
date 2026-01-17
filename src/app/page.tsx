@@ -187,10 +187,13 @@ function HeroSlider() {
                   index === i ? "scale-100" : "scale-[1.03]"
                 }`}
               >
-                <div className="text-center max-w-3xl">
+                <div className="text-center max-w-3xl relative">
+                  <div aria-hidden className="pointer-events-none absolute -top-24 -left-24 w-64 h-64 rounded-full bg-[color:var(--champagne-gold)]/20 blur-3xl" />
+                  <div aria-hidden className="pointer-events-none absolute -bottom-24 -right-24 w-72 h-72 rounded-full bg-[color:var(--nude-blush)]/20 blur-3xl" />
                   {i === 0 && (
                     <>
-                      <div className="font-serif text-5xl md:text-6xl tracking-[0.02em]">NEEMON Beauty is not a trend. It’s a signature.</div>
+                      <div className="font-serif text-5xl md:text-6xl tracking-[0.02em] bg-gradient-to-r from-[color:var(--champagne-gold)] to-[color:var(--ivory-white)] bg-clip-text text-transparent animate-[textSheen_2200ms_ease-in-out_infinite]">NEEMON</div>
+                      <div className="mt-3 text-lg md:text-xl opacity-95">Luxury Beauty. Signature Experience.</div>
                       <div className="mt-8 flex gap-3 justify-center">
                         <Link href="/" className="rounded-xl px-6 py-3 bg-[color:var(--champagne-gold)] text-white">
                           Enter NEEMON World
@@ -203,7 +206,7 @@ function HeroSlider() {
                   )}
                   {i === 1 && (
                     <>
-                      <div className="font-serif text-4xl md:text-5xl tracking-[0.02em]">Shopping Launching Soon ✨</div>
+                      <div className="font-serif text-4xl md:text-5xl tracking-[0.02em] animate-[fadeUp_800ms_ease-out_both]">Coming Soon ✨</div>
                       <div className="mt-3 text-lg md:text-xl">Premium Beauty. Delivered to Your Door.</div>
                       <div className="mt-2 text-sm md:text-base text-zinc-700 dark:text-zinc-300">
                         Skincare • Makeup • Hair • Fragrance • Tools
@@ -220,11 +223,9 @@ function HeroSlider() {
                   )}
                   {i === 2 && (
                     <>
-                      <div className="font-serif text-4xl md:text-5xl tracking-[0.02em] text-white">Designed for Every Shade</div>
-                      <div className="mt-3 text-lg md:text-xl text-white">Created for Confidence</div>
-                      <div className="mt-2 text-sm md:text-base text-white/80">
-                        Where Kenyan beauty meets modern luxury.
-                      </div>
+                      <div className="font-serif text-4xl md:text-5xl tracking-[0.02em] bg-gradient-to-r from-[color:var(--champagne-gold)] to-[color:var(--ivory-white)] bg-clip-text text-transparent">Every Shade. Every Story. Every You.</div>
+                      <div className="mt-3 text-lg md:text-xl text-white">Inclusive luxury crafted for confidence.</div>
+                      <div className="mt-2 text-sm md:text-base text-white/80">Where Kenyan beauty meets modern luxury.</div>
                       <div className="mt-8">
                         <Link href="/about" className="rounded-xl px-6 py-3 border border-white text-white">
                           Explore the NEEMON Experience
@@ -269,6 +270,15 @@ function HeroSlider() {
           0% { transform: translate3d(-2%, -2%, 0) scale(1.02); }
           50% { transform: translate3d(2%, 2%, 0) scale(1.04); }
           100% { transform: translate3d(-2%, -2%, 0) scale(1.02); }
+        }
+        @keyframes fadeUp {
+          0% { opacity: 0; transform: translate3d(0, 12px, 0); }
+          100% { opacity: 1; transform: translate3d(0, 0, 0); }
+        }
+        @keyframes textSheen {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
         }
       `}</style>
     </section>
