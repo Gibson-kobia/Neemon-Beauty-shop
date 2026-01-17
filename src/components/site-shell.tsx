@@ -93,6 +93,7 @@ function CartButton() {
                       alt={l.product!.name}
                       fill
                       sizes="40px"
+                      loading="lazy"
                       placeholder="blur"
                       blurDataURL={blur}
                       className="object-cover"
@@ -275,6 +276,14 @@ function Shell({ children }: { children: React.ReactNode }) {
             )}
             <CartButton />
             <button className="lg:hidden rounded-xl px-3 py-2 border" onClick={() => setMobileOpen(true)}>☰</button>
+            <style jsx>{`
+              @media (max-width: 480px) {
+                button.lg\\:hidden {
+                  min-width: 48px;
+                  min-height: 48px;
+                }
+              }
+            `}</style>
           </div>
         </div>
         {menuOpen && (
@@ -343,9 +352,9 @@ function Shell({ children }: { children: React.ReactNode }) {
       <main className="flex-1">{children}</main>
       <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/85 dark:bg-black/70 backdrop-blur lg:hidden">
         <div className="mx-auto max-w-7xl px-6 py-2 flex items-center justify-between">
-          <a href="https://wa.me/254700000000" className="rounded-full px-4 py-2 border text-sm">WhatsApp</a>
-          <button onClick={() => setSearchOpen(true)} className="rounded-full px-4 py-2 border text-sm">Search</button>
-          <button onClick={() => setMobileOpen(true)} className="rounded-full px-4 py-2 border text-sm">Menu</button>
+          <a href="https://wa.me/254700000000" className="rounded-full px-4 py-2 border text-sm min-h-[48px] min-w-[48px] grid place-items-center">WhatsApp</a>
+          <button onClick={() => setSearchOpen(true)} className="rounded-full px-4 py-2 border text-sm min-h-[48px] min-w-[48px]">Search</button>
+          <button onClick={() => setMobileOpen(true)} className="rounded-full px-4 py-2 border text-sm min-h-[48px] min-w-[48px]">Menu</button>
         </div>
       </div>
       {mobileOpen && (
@@ -356,13 +365,13 @@ function Shell({ children }: { children: React.ReactNode }) {
               <button onClick={() => setMobileOpen(false)} className="rounded-full px-3 py-1 border">Close</button>
             </div>
             <div className="mt-6 flex flex-col gap-3">
-              <Link href="/" onClick={() => setMobileOpen(false)}>Home</Link>
-              <Link href="/launch" onClick={() => setMobileOpen(false)}>Shop</Link>
-              <Link href="/launch" onClick={() => setMobileOpen(false)}>Categories</Link>
-              <Link href="/shade-quiz" onClick={() => setMobileOpen(false)}>Shade Quiz</Link>
-              <Link href="/offers" onClick={() => setMobileOpen(false)}>Offers</Link>
-              <Link href="/about" onClick={() => setMobileOpen(false)}>About</Link>
-              <Link href="/account" onClick={() => setMobileOpen(false)}>Account</Link>
+              <Link href="/" className="py-3" onClick={() => setMobileOpen(false)}>Home</Link>
+              <Link href="/launch" className="py-3" onClick={() => setMobileOpen(false)}>Shop</Link>
+              <Link href="/launch" className="py-3" onClick={() => setMobileOpen(false)}>Categories</Link>
+              <Link href="/shade-quiz" className="py-3" onClick={() => setMobileOpen(false)}>Shade Quiz</Link>
+              <Link href="/offers" className="py-3" onClick={() => setMobileOpen(false)}>Offers</Link>
+              <Link href="/about" className="py-3" onClick={() => setMobileOpen(false)}>About</Link>
+              <Link href="/account" className="py-3" onClick={() => setMobileOpen(false)}>Account</Link>
             </div>
           </div>
         </div>

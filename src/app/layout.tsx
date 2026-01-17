@@ -21,6 +21,11 @@ export const metadata: Metadata = {
     "Luxury Kenyan beauty ecommerce. Authentic brands, secure M‑Pesa, nationwide delivery.",
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{

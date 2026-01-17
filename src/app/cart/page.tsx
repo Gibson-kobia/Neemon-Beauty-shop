@@ -89,6 +89,7 @@ export default function CartPage() {
                     alt={i.product?.name || ""}
                     fill
                     sizes="80px"
+                    loading="lazy"
                     placeholder="blur"
                     blurDataURL={blur}
                     className="object-cover"
@@ -150,6 +151,7 @@ export default function CartPage() {
                             alt={p!.name}
                             fill
                             sizes="64px"
+                            loading="lazy"
                             placeholder="blur"
                             blurDataURL={blur}
                             className="object-cover"
@@ -222,7 +224,7 @@ export default function CartPage() {
             </div>
             <Link
               href="/checkout"
-              className="mt-4 block rounded-full px-4 py-2 bg-[color:var(--champagne-gold)] text-white text-center"
+              className="mt-4 block rounded-full px-4 py-2 bg-[color:var(--champagne-gold)] text-white text-center min-h-[48px]"
             >
               Checkout
             </Link>

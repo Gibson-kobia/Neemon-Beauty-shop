@@ -22,6 +22,9 @@
   --color-plum: var(--deep-plum);
   --font-serif: var(--font-heading);
   --font-sans: var(--font-body);
+  --breakpoint-xs: 320px;
+  --breakpoint-sm: 480px;
+  --breakpoint-md: 768px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -36,6 +39,14 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, -apple-system, Segoe UI, Roboto,
     Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+  height: auto;
 }
 
 html[data-theme="dark"] {
