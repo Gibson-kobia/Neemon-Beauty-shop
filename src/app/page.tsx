@@ -1,3 +1,5 @@
+"use client";
+import { useEffect, useRef, useState } from "react";
 import { products } from "../lib/products";
 import { ProductCard } from "../components/product-card";
 import Link from "next/link";
@@ -6,39 +8,7 @@ export default function Home() {
   const featured = products.slice(0, 12);
   return (
     <div className="mx-auto max-w-7xl px-6">
-      <section className="relative overflow-hidden rounded-3xl mt-8">
-        <div className="absolute inset-0 bg-gradient-to-tr from-[color:var(--nude-blush)] via-[color:var(--champagne-gold)] to-[color:var(--ivory-white)]" />
-        <div className="absolute inset-0 opacity-[0.08]" style={{ backgroundImage: "radial-gradient(1px 1px at 10% 20%, rgba(0,0,0,0.6), transparent 1px), radial-gradient(1px 1px at 80% 70%, rgba(0,0,0,0.6), transparent 1px)" }} />
-        <div className="relative grid md:grid-cols-2">
-          <div className="p-10 md:p-16">
-            <div className="font-serif text-4xl md:text-5xl leading-tight tracking-[0.02em]">
-              Elevate Your Glow
-            </div>
-            <p className="mt-4 text-zinc-700 dark:text-zinc-300">
-              Authentic brands. Inclusive glam. Nairobi same‑day delivery.
-            </p>
-            <div className="mt-8 flex gap-3 sm:gap-4 flex-col sm:flex-row">
-              <Link
-                href="/category/makeup"
-                aria-label="Shop New Arrivals"
-                className="inline-flex items-center justify-center rounded-xl px-6 py-3 sm:px-7 sm:py-3.5 min-h-12 bg-[color:var(--champagne-gold)] text-white text-sm sm:text-base tracking-[0.02em] transition-all hover:opacity-90 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--champagne-gold)] focus-visible:ring-offset-2"
-              >
-                Shop New Arrivals
-              </Link>
-              <Link
-                href="/shade-quiz"
-                aria-label="Find Your Shade"
-                className="inline-flex items-center justify-center rounded-xl px-6 py-3 sm:px-7 sm:py-3.5 min-h-12 border border-black/10 dark:border-white/10 text-sm sm:text-base tracking-[0.02em] transition-all hover:bg-black/5 dark:hover:bg-white/10 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--champagne-gold)] focus-visible:ring-offset-2"
-              >
-                Find Your Shade
-              </Link>
-            </div>
-          </div>
-          <div className="p-10 md:p-16">
-            <div className="h-full w-full rounded-2xl bg-[color:var(--nude-blush)]/60 dark:bg-black/40"></div>
-          </div>
-        </div>
-      </section>
+      <HeroSlider />
 
       <section className="mt-6">
         <div className="rounded-full px-4 py-2 text-xs grid grid-cols-3 gap-2 text-center border bg-white dark:bg-black">
@@ -113,5 +83,188 @@ export default function Home() {
         </div>
       </section>
     </div>
+  );
+}
+
+function HeroSlider() {
+  const [index, setIndex] = useState(0);
+  const timerRef = useRef<number | null>(null);
+  const touchStartX = useRef<number | null>(null);
+  const touchDeltaX = useRef<number>(0);
+
+  useEffect(() => {
+    if (timerRef.current) {
+      window.clearInterval(timerRef.current);
+    }
+    timerRef.current = window.setInterval(() => {
+      setIndex((i) => (i + 1) % 3);
+    }, 7000);
+    return () => {
+      if (timerRef.current) window.clearInterval(timerRef.current);
+    };
+  }, [index]);
+
+  const go = (to: number) => {
+    setIndex(((to % 3) + 3) % 3);
+  };
+  const next = () => go(index + 1);
+  const prev = () => go(index - 1);
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchDeltaX.current = 0;
+  };
+  const onTouchMove = (e: React.TouchEvent) => {
+    if (touchStartX.current !== null) {
+      touchDeltaX.current = e.touches[0].clientX - touchStartX.current;
+    }
+  };
+  const onTouchEnd = () => {
+    const threshold = 40;
+    if (touchDeltaX.current > threshold) {
+      prev();
+    } else if (touchDeltaX.current < -threshold) {
+      next();
+    }
+    touchStartX.current = null;
+    touchDeltaX.current = 0;
+  };
+
+  return (
+    <section
+      className="relative overflow-hidden rounded-3xl mt-8 min-h-screen"
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+    >
+      <div className="absolute inset-0">
+        <SlideBackground idx={index} />
+      </div>
+      <div className="relative h-full">
+        <div className="absolute inset-0">
+          {[0, 1, 2].map((i) => (
+            <div
+              key={i}
+              className={`absolute inset-0 transition-opacity duration-700 ease-out ${
+                index === i ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              <div
+                className={`flex items-center justify-center px-6 md:px-12 h-full transition-transform duration-[800ms] ${
+                  index === i ? "scale-100" : "scale-[1.03]"
+                }`}
+              >
+                <div className="text-center max-w-3xl">
+                  {i === 0 && (
+                    <>
+                      <div className="font-serif text-5xl md:text-6xl tracking-[0.02em]">Elevate Your Glow</div>
+                      <div className="mt-4 text-sm md:text-base text-zinc-700 dark:text-zinc-300">
+                        Authentic brands. Inclusive glam. Nairobi same‑day delivery.
+                      </div>
+                      <div className="mt-8 flex gap-3 justify-center">
+                        <Link href="/category/makeup" className="rounded-xl px-6 py-3 bg-[color:var(--champagne-gold)] text-white">
+                          Shop New Arrivals
+                        </Link>
+                        <Link href="/shade-quiz" className="rounded-xl px-6 py-3 border">
+                          Find Your Shade
+                        </Link>
+                      </div>
+                    </>
+                  )}
+                  {i === 1 && (
+                    <>
+                      <div className="font-serif text-4xl md:text-5xl tracking-[0.02em]">Shopping Launching Soon</div>
+                      <div className="mt-3 text-lg md:text-xl">Premium Beauty. Delivered to Your Door.</div>
+                      <div className="mt-2 text-sm md:text-base text-zinc-700 dark:text-zinc-300">
+                        Skincare • Makeup • Hair • Fragrance • Tools
+                      </div>
+                      <div className="mt-8">
+                        <Link href="/launch" className="rounded-xl px-6 py-3 border">
+                          Get Launch Alerts
+                        </Link>
+                      </div>
+                    </>
+                  )}
+                  {i === 2 && (
+                    <>
+                      <div className="font-serif text-4xl md:text-5xl tracking-[0.02em]">Designed for Every Shade</div>
+                      <div className="mt-3 text-lg md:text-xl">Created for Confidence</div>
+                      <div className="mt-2 text-sm md:text-base text-zinc-700 dark:text-zinc-300">
+                        Where Kenyan beauty meets modern luxury.
+                      </div>
+                      <div className="mt-8">
+                        <Link href="/about" className="rounded-xl px-6 py-3 border">
+                          Explore the NEEMON Experience
+                        </Link>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <button
+          aria-label="Previous slide"
+          onClick={prev}
+          className="hidden md:inline-flex absolute left-4 top-1/2 -translate-y-1/2 rounded-full w-10 h-10 border bg-white/60 dark:bg-black/50 backdrop-blur text-center"
+        >
+          ‹
+        </button>
+        <button
+          aria-label="Next slide"
+          onClick={next}
+          className="hidden md:inline-flex absolute right-4 top-1/2 -translate-y-1/2 rounded-full w-10 h-10 border bg-white/60 dark:bg-black/50 backdrop-blur text-center"
+        >
+          ›
+        </button>
+
+        <div className="absolute bottom-6 left-0 right-0 flex items-center justify-center gap-2">
+          {[0, 1, 2].map((i) => (
+            <button
+              key={i}
+              aria-label={`Go to slide ${i + 1}`}
+              onClick={() => go(i)}
+              className={`w-2.5 h-2.5 rounded-full ${index === i ? "bg-[color:var(--champagne-gold)]" : "bg-black/20 dark:bg-white/20"}`}
+            />
+          ))}
+        </div>
+      </div>
+      <style jsx>{`
+        @keyframes gradientShift {
+          0% { transform: translate3d(-2%, -2%, 0) scale(1.02); }
+          50% { transform: translate3d(2%, 2%, 0) scale(1.04); }
+          100% { transform: translate3d(-2%, -2%, 0) scale(1.02); }
+        }
+      `}</style>
+    </section>
+  );
+}
+
+function SlideBackground({ idx }: { idx: number }) {
+  return (
+    <>
+      {idx === 0 && (
+        <div className="w-full h-full relative">
+          <div className="absolute inset-0 bg-gradient-to-tr from-[color:var(--nude-blush)] via-[color:var(--champagne-gold)] to-[color:var(--ivory-white)] animate-[gradientShift_12s_ease_infinite]" />
+          <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: "radial-gradient(1px 1px at 10% 20%, rgba(0,0,0,0.6), transparent 1px), radial-gradient(1px 1px at 80% 70%, rgba(0,0,0,0.6), transparent 1px)" }} />
+        </div>
+      )}
+      {idx === 1 && (
+        <div className="w-full h-full relative">
+          <div className="absolute inset-0 bg-gradient-to-br from-[color:var(--nude-blush)] via-[color:var(--champagne-gold)] to-[color:var(--ivory-white)] animate-[gradientShift_12s_ease_infinite] opacity-90" />
+          <div aria-hidden className="absolute -top-24 -left-24 w-[520px] h-[520px] rounded-full bg-[color:var(--champagne-gold)]/20 blur-3xl animate-[gradientShift_16s_linear_infinite]" />
+          <div aria-hidden className="absolute -bottom-20 -right-16 w-[460px] h-[460px] rounded-full bg-[color:var(--nude-blush)]/25 blur-3xl animate-[gradientShift_18s_linear_infinite]" />
+        </div>
+      )}
+      {idx === 2 && (
+        <div className="w-full h-full relative">
+          <div className="absolute inset-0 bg-gradient-to-br from-[color:var(--charcoal-black)] via-black to-[color:var(--deep-plum)]" />
+          <div aria-hidden className="absolute -top-32 -left-16 w-[560px] h-[560px] rounded-full bg-[color:var(--champagne-gold)]/12 blur-3xl animate-[gradientShift_14s_linear_infinite]" />
+          <div aria-hidden className="absolute -bottom-24 -right-24 w-[520px] h-[520px] rounded-full bg-[color:var(--champagne-gold)]/10 blur-3xl animate-[gradientShift_20s_linear_infinite]" />
+        </div>
+      )}
+    </>
   );
 }
