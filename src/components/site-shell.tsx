@@ -41,8 +41,9 @@ function CartButton() {
   return (
     <div className="relative">
       <button
+        aria-label="Cart"
         onClick={openDrawer}
-        className="relative rounded-full px-3 py-2 border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/10"
+        className="relative rounded-full px-3 py-2 border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/10 min-h-[48px] min-w-[48px] text-[color:var(--foreground)]"
       >
         <span className="inline-flex items-center gap-2">
           <svg
@@ -195,20 +196,20 @@ function Shell({ children }: { children: React.ReactNode }) {
           <div className="flex items-center justify-between h-9 text-xs">
             <div className="opacity-80">Free Nairobi delivery on orders over KES 3,000</div>
             <div className="flex items-center gap-3">
-              <button className="w-6 h-6 rounded-full grid place-items-center bg-white/50 dark:bg-black/40">
+              <button className="w-6 h-6 rounded-full grid place-items-center bg-white/50 dark:bg-black/40 text-[color:var(--foreground)]">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Z"/><path d="M16 11.37a4 4 0 1 1-7.87 1.16 4 4 0 0 1 7.87-1.16Z"/><path d="M17.5 6.5h.01"/></svg>
               </button>
               <a
                 href="https://wa.me/254708065140?text=Hi%20NEEMON%20Beauty,%20I%20want%20to%20be%20notified%20when%20shopping%20goes%20live."
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-6 h-6 rounded-full grid place-items-center bg-white/50 dark:bg-black/40"
+                className="w-6 h-6 rounded-full grid place-items-center bg-white/50 dark:bg-black/40 text-[color:var(--foreground)]"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M15.05 14.45c-.2.1-1.15.55-1.33.6-.18.07-.32.1-.45-.1-.13-.2-.52-.6-.64-.73-.12-.13-.23-.15-.43-.05-.2.1-.85.42-1.62 1.34-.6.73-.99 1.62-1.1 1.82-.1.2-.22.18-.42.1-.2-.1-1.1-.4-1.85-.86-.76-.47-1.37-1.03-1.97-1.78-.6-.76-1.06-1.58-1.35-2.48-.28-.9-.4-1.77-.4-2.6 0-2.4 1.05-4.6 2.87-6.1a8.66 8.66 0 0 1 5.47-2.01c2.38 0 4.65.92 6.34 2.57a8.66 8.66 0 0 1 2.52 6.17c0 2.33-.91 4.52-2.56 6.17A8.66 8.66 0 0 1 12 21.33c-.81 0-1.61-.12-2.38-.35l-3.59 1.16 1.18-3.5A9.13 9.13 0 0 1 3 12.03c0-2.54.99-4.92 2.77-6.7A9.46 9.46 0 0 1 12 2.87c2.52 0 4.9.98 6.68 2.76a9.46 9.46 0 0 1 2.76 6.68c0 2.52-.98 4.89-2.76 6.67A9.46 9.46 0 0 1 12 21.73"/></svg>
               </a>
               <button
                 aria-label="Toggle theme"
-                className="w-6 h-6 rounded-full grid place-items-center bg-white/50 dark:bg-black/40"
+                className="w-6 h-6 rounded-full grid place-items-center bg-white/50 dark:bg-black/40 text-[color:var(--foreground)]"
                 onClick={() => {
                   const html = document.documentElement;
                   const next = html.getAttribute("data-theme") === "dark" ? "light" : "dark";
@@ -269,7 +270,7 @@ function Shell({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-2 sm:gap-3">
             <button
               aria-label="Search"
-              className="rounded-xl px-3 py-2 border border-black/10 dark:border-white/10"
+              className="rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 min-h-[48px] min-w-[48px] text-[color:var(--foreground)]"
               onClick={() => setSearchOpen(true)}
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
