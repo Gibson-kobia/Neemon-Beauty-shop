@@ -16,6 +16,13 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
     .filter((p) => p.category === product.category && p.id !== product.id)
     .slice(0, 4);
   const blur = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'><rect width='100%' height='100%' fill='%23f5e7c6'/></svg>";
+  const categoryFallback: Record<string, string> = {
+    makeup: "https://images.unsplash.com/photo-1512207853000-96e8d0d5b7a0?q=80&w=1080&auto=format&fit=crop",
+    skincare: "https://images.unsplash.com/photo-1598214886804-5dc71da0a6ee?q=80&w=1080&auto=format&fit=crop",
+    hair: "https://images.unsplash.com/photo-1514996937319-344454492b37?q=80&w=1080&auto=format&fit=crop",
+    perfumes: "https://images.unsplash.com/photo-1520583457224-c79aa0b112e3?q=80&w=1080&auto=format&fit=crop",
+    tools: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc0?q=80&w=1080&auto=format&fit=crop",
+  };
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-10">
@@ -25,7 +32,7 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
             src={
               !imgError && product.image && product.image.startsWith("http")
                 ? product.image
-                : "/product-placeholder.png"
+                : categoryFallback[product.category] || "/product-placeholder.png"
             }
             alt={product.name}
             fill
@@ -72,7 +79,7 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
                       src={
                         p.image && p.image.startsWith("http")
                           ? p.image
-                          : "/product-placeholder.png"
+                          : categoryFallback[p.category] || "/product-placeholder.png"
                       }
                       alt={p.name}
                       fill
