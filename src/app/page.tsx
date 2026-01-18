@@ -1,8 +1,8 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
 import { products } from "../lib/products";
 import { ProductCard } from "../components/product-card";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Home() {
   const featured = products.slice(0, 12);
@@ -87,227 +87,101 @@ export default function Home() {
 }
 
 function HeroSlider() {
-  const [index, setIndex] = useState(0);
-  const timerRef = useRef<number | null>(null);
-  const touchStartX = useRef<number | null>(null);
-  const touchDeltaX = useRef<number>(0);
-  const mountedRef = useRef(false);
-
-  const go = (to: number) => {
-    setIndex(((to % 3) + 3) % 3);
-    if (mountedRef.current) {
-      if (timerRef.current) window.clearInterval(timerRef.current);
-      timerRef.current = window.setInterval(() => {
-        setIndex((i) => (i + 1) % 3);
-      }, 7000);
-    }
-  };
-  const next = () => go(index + 1);
-  const prev = () => go(index - 1);
-
-  useEffect(() => {
-    const start = () => {
-      if (timerRef.current) window.clearInterval(timerRef.current);
-      timerRef.current = window.setInterval(() => {
-        setIndex((i) => (i + 1) % 3);
-      }, 7000);
-    };
-    start();
-    mountedRef.current = true;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft") {
-        setIndex((i) => ((i - 1 + 3) % 3));
-        if (timerRef.current) {
-          window.clearInterval(timerRef.current);
-          timerRef.current = window.setInterval(() => {
-            setIndex((i) => (i + 1) % 3);
-          }, 7000);
-        }
-      }
-      if (e.key === "ArrowRight") {
-        setIndex((i) => ((i + 1) % 3));
-        if (timerRef.current) {
-          window.clearInterval(timerRef.current);
-          timerRef.current = window.setInterval(() => {
-            setIndex((i) => (i + 1) % 3);
-          }, 7000);
-        }
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => {
-      if (timerRef.current) window.clearInterval(timerRef.current);
-      window.removeEventListener("keydown", onKey);
-    };
-  }, []);
-
-  const onTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-    touchDeltaX.current = 0;
-  };
-  const onTouchMove = (e: React.TouchEvent) => {
-    if (touchStartX.current !== null) {
-      touchDeltaX.current = e.touches[0].clientX - touchStartX.current;
-    }
-  };
-  const onTouchEnd = () => {
-    const threshold = 40;
-    if (touchDeltaX.current > threshold) {
-      prev();
-    } else if (touchDeltaX.current < -threshold) {
-      next();
-    }
-    touchStartX.current = null;
-    touchDeltaX.current = 0;
-  };
+  const noise =
+    "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>";
+  const imageUrl =
+    "https://images.pexels.com/photos/3764019/pexels-photo-3764019.jpeg?auto=compress&cs=tinysrgb&w=1200";
+  const blur =
+    "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'><rect width='100%' height='100%' fill='%23f7e9e4'/></svg>";
 
   return (
-    <section
-      className="relative overflow-hidden rounded-3xl mt-8 min-h-[100svh]"
-      onTouchStart={onTouchStart}
-      onTouchMove={onTouchMove}
-      onTouchEnd={onTouchEnd}
-      aria-roledescription="carousel"
-      aria-label="NEEMON luxury brand slider"
-    >
-      <div className="absolute inset-0 pointer-events-none z-0">
-        <SlideBackground idx={index} />
+    <section className="relative mt-8 min-h-[100svh] px-4 md:px-6" aria-label="NEEMON luxury hero">
+      <div className="absolute inset-0 pointer-events-none -z-10">
+        <SlideBackground />
       </div>
-      <div className="relative h-full z-10">
-        <div className="absolute inset-0">
-          {[0, 1, 2].map((i) => (
-            <div
-              key={i}
-              className={`absolute inset-0 transition-opacity duration-700 ease-out z-10 ${
-                index === i ? "opacity-100" : "opacity-0"
-              }`}
-            >
-              <div
-                className={`flex items-center justify-center px-6 md:px-12 h-full transition-transform duration-[800ms] ${
-                  index === i ? "scale-100" : "scale-[1.03]"
-                }`}
-              >
-                <div className="text-center max-w-3xl relative">
-                  <div aria-hidden className="pointer-events-none absolute -top-24 -left-24 w-64 h-64 rounded-full bg-[color:var(--champagne-gold)]/20 blur-3xl" />
-                  <div aria-hidden className="pointer-events-none absolute -bottom-24 -right-24 w-72 h-72 rounded-full bg-[color:var(--nude-blush)]/20 blur-3xl" />
-                  {i === 0 && (
-                    <>
-                      <div className="font-serif text-5xl md:text-6xl tracking-[0.02em] bg-gradient-to-r from-[color:var(--champagne-gold)] to-[color:var(--ivory-white)] bg-clip-text text-transparent animate-[textSheen_2200ms_ease-in-out_infinite]">NEEMON</div>
-                      <div className="mt-3 text-lg md:text-xl opacity-95">Luxury Beauty. Signature Experience.</div>
-                      <div className="mt-8 flex gap-3 justify-center">
-                        <Link href="/" className="rounded-xl px-6 py-3 bg-[color:var(--champagne-gold)] text-white">
-                          Enter NEEMON World
-                        </Link>
-                        <Link href="https://wa.me/254708065140" target="_blank" rel="noopener" className="rounded-xl px-6 py-3 border">
-                          WhatsApp VIP
-                        </Link>
-                      </div>
-                    </>
-                  )}
-                  {i === 1 && (
-                    <>
-                      <div className="font-serif text-4xl md:text-5xl tracking-[0.02em] animate-[fadeUp_800ms_ease-out_both]">Coming Soon ✨</div>
-                      <div className="mt-3 text-lg md:text-xl">Premium Beauty. Delivered to Your Door.</div>
-                      <div className="mt-2 text-sm md:text-base text-zinc-700 dark:text-zinc-300">
-                        Skincare • Makeup • Hair • Fragrance • Tools
-                      </div>
-                      <div className="mt-8 flex gap-3 justify-center">
-                        <Link href="/launch" className="rounded-xl px-6 py-3 border">
-                          Get Launch Alerts
-                        </Link>
-                        <Link href="https://wa.me/254708065140" target="_blank" rel="noopener" className="rounded-xl px-6 py-3 border">
-                          WhatsApp VIP
-                        </Link>
-                      </div>
-                    </>
-                  )}
-                  {i === 2 && (
-                    <>
-                      <div className="font-serif text-4xl md:text-5xl tracking-[0.02em] bg-gradient-to-r from-[color:var(--champagne-gold)] to-[color:var(--ivory-white)] bg-clip-text text-transparent">Every Shade. Every Story. Every You.</div>
-                      <div className="mt-3 text-lg md:text-xl text-white">Inclusive luxury crafted for confidence.</div>
-                      <div className="mt-2 text-sm md:text-base text-white/80">Where Kenyan beauty meets modern luxury.</div>
-                      <div className="mt-8">
-                        <Link href="/about" className="rounded-xl px-6 py-3 border border-white text-white">
-                          Explore the NEEMON Experience
-                        </Link>
-                      </div>
-                    </>
-                  )}
-                </div>
+
+      <div className="relative mx-auto max-w-7xl rounded-[32px] overflow-hidden bg-white/80 dark:bg-black/60 backdrop-blur-sm ring-1 ring-black/5 dark:ring-white/10 shadow-[0_40px_120px_rgba(0,0,0,0.08)] animate-[fadeCard_600ms_ease-out_both]">
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.06] mix-blend-multiply"
+          style={{ backgroundImage: `url(${noise})`, backgroundSize: "200px" }}
+        />
+
+        <div className="grid md:grid-cols-2">
+          <div className="px-6 md:px-10 py-10 lg:py-14 flex items-center">
+            <div className="max-w-xl">
+              <h1 className="font-serif text-5xl md:text-6xl leading-tight tracking-[0.01em]">
+                <span className="block">Where Beauty</span>
+                <span className="block">Meets Confidence</span>
+              </h1>
+              <p className="mt-4 text-sm md:text-base opacity-90">
+                Discover skincare, makeup, hair and fragrance curated for every shade, every style,
+                and every moment. NEEMON is not just beauty — it’s how you show up to the world.
+              </p>
+              <div className="mt-8 flex items-center gap-4">
+                <Link
+                  href="/launch"
+                  className="rounded-2xl px-6 py-3 text-sm font-medium bg-[color:var(--champagne-gold)] text-[color:var(--charcoal-black)] shadow-[0_8px_24px_rgba(214,191,164,0.45)] hover:shadow-[0_12px_32px_rgba(214,191,164,0.55)] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--champagne-gold)] focus-visible:ring-offset-2"
+                >
+                  Launching Soon — Join Us
+                </Link>
+                <Link
+                  href="https://wa.me/254708065140"
+                  target="_blank"
+                  rel="noopener"
+                  className="text-sm underline opacity-90 hover:opacity-100"
+                >
+                  Chat with us on WhatsApp
+                </Link>
               </div>
             </div>
-          ))}
-        </div>
-
-        <button
-          aria-label="Previous slide"
-          onClick={prev}
-          className="hidden md:inline-flex absolute left-4 top-1/2 -translate-y-1/2 rounded-full w-10 h-10 border bg-white/60 dark:bg-black/50 backdrop-blur text-center"
-        >
-          ‹
-        </button>
-        <button
-          aria-label="Next slide"
-          onClick={next}
-          className="hidden md:inline-flex absolute right-4 top-1/2 -translate-y-1/2 rounded-full w-10 h-10 border bg-white/60 dark:bg-black/50 backdrop-blur text-center"
-        >
-          ›
-        </button>
-
-        <div className="absolute bottom-6 left-0 right-0 flex items-center justify-center gap-2">
-          {[0, 1, 2].map((i) => (
-            <button
-              key={i}
-              aria-label={`Go to slide ${i + 1}`}
-              onClick={() => go(i)}
-              className={`w-2.5 h-2.5 rounded-full ${index === i ? "bg-[color:var(--champagne-gold)]" : "bg-black/20 dark:bg-white/20"}`}
+          </div>
+          <div className="relative h-[46vh] md:h-auto min-h-[46vh]">
+            <Image
+              src={imageUrl}
+              alt="Editorial beauty — soft cinematic portrait"
+              fill
+              priority
+              quality={55}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px"
+              placeholder="blur"
+              blurDataURL={blur}
+              className="object-cover animate-[imageZoom_20s_ease_infinite]"
             />
-          ))}
+            <div className="absolute inset-0 bg-gradient-to-l from-[color:var(--charcoal-black)]/45 via-[color:var(--charcoal-black)]/20 to-transparent" />
+          </div>
         </div>
+
+        
+
+        <style jsx>{`
+          @keyframes gradientShift {
+            0% { transform: translate3d(-2%, -2%, 0) scale(1.02); }
+            50% { transform: translate3d(2%, 2%, 0) scale(1.04); }
+            100% { transform: translate3d(-2%, -2%, 0) scale(1.02); }
+          }
+          @keyframes fadeUp {
+            0% { opacity: 0; transform: translate3d(0, 12px, 0); }
+            100% { opacity: 1; transform: translate3d(0, 0, 0); }
+          }
+          @keyframes imageZoom {
+            0% { transform: scale(1.05) translate3d(0,0,0); }
+            50% { transform: scale(1.08) translate3d(0,0,0); }
+            100% { transform: scale(1.05) translate3d(0,0,0); }
+          }
+          @keyframes fadeCard {
+            0% { opacity: 0; transform: translate3d(0, 8px, 0); }
+            100% { opacity: 1; transform: translate3d(0, 0, 0); }
+          }
+        `}</style>
       </div>
-      <style jsx>{`
-        @keyframes gradientShift {
-          0% { transform: translate3d(-2%, -2%, 0) scale(1.02); }
-          50% { transform: translate3d(2%, 2%, 0) scale(1.04); }
-          100% { transform: translate3d(-2%, -2%, 0) scale(1.02); }
-        }
-        @keyframes fadeUp {
-          0% { opacity: 0; transform: translate3d(0, 12px, 0); }
-          100% { opacity: 1; transform: translate3d(0, 0, 0); }
-        }
-        @keyframes textSheen {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-      `}</style>
     </section>
   );
 }
 
-function SlideBackground({ idx }: { idx: number }) {
+function SlideBackground() {
   return (
-    <>
-      {idx === 0 && (
-        <div className="w-full h-full relative">
-          <div className="absolute inset-0 bg-gradient-to-tr from-[color:var(--nude-blush)] via-[color:var(--champagne-gold)] to-[color:var(--ivory-white)] animate-[gradientShift_12s_ease_infinite]" />
-          <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: "radial-gradient(1px 1px at 10% 20%, rgba(0,0,0,0.6), transparent 1px), radial-gradient(1px 1px at 80% 70%, rgba(0,0,0,0.6), transparent 1px)" }} />
-        </div>
-      )}
-      {idx === 1 && (
-        <div className="w-full h-full relative">
-          <div className="absolute inset-0 bg-gradient-to-br from-[color:var(--nude-blush)] via-[color:var(--champagne-gold)] to-[color:var(--ivory-white)] animate-[gradientShift_12s_ease_infinite] opacity-90" />
-          <div aria-hidden className="absolute -top-24 -left-24 w-[520px] h-[520px] rounded-full bg-[color:var(--champagne-gold)]/20 blur-3xl animate-[gradientShift_16s_linear_infinite]" />
-          <div aria-hidden className="absolute -bottom-20 -right-16 w-[460px] h-[460px] rounded-full bg-[color:var(--nude-blush)]/25 blur-3xl animate-[gradientShift_18s_linear_infinite]" />
-        </div>
-      )}
-      {idx === 2 && (
-        <div className="w-full h-full relative">
-          <div className="absolute inset-0 bg-gradient-to-br from-[color:var(--charcoal-black)] via-black to-[color:var(--deep-plum)]" />
-          <div aria-hidden className="absolute -top-32 -left-16 w-[560px] h-[560px] rounded-full bg-[color:var(--champagne-gold)]/12 blur-3xl animate-[gradientShift_14s_linear_infinite]" />
-          <div aria-hidden className="absolute -bottom-24 -right-24 w-[520px] h-[520px] rounded-full bg-[color:var(--champagne-gold)]/10 blur-3xl animate-[gradientShift_20s_linear_infinite]" />
-        </div>
-      )}
-    </>
+    <div className="w-full h-full relative">
+      <div className="absolute inset-0 bg-gradient-to-br from-[color:var(--nude-blush)] via-[color:var(--ivory-white)] to-[color:var(--ivory-white)] animate-[gradientShift_14s_ease_infinite] opacity-80" />
+    </div>
   );
 }
