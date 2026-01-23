@@ -1,11 +1,28 @@
 "use client";
-import { products } from "../lib/products";
+import { useEffect, useState } from "react";
+import { fetchProducts, Product } from "../lib/products";
 import { ProductCard } from "../components/product-card";
 import Link from "next/link";
 import Image from "next/image";
 
 export default function Home() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      const data = await fetchProducts();
+      setProducts(data);
+      setLoading(false);
+    }
+    load();
+  }, []);
+
   const featured = products.slice(0, 12);
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }
   return (
     <div className="mx-auto max-w-7xl px-6">
       <HeroSlider />

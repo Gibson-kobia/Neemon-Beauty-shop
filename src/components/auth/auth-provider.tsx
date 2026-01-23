@@ -34,14 +34,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let mounted = true;
-    getSupabase().auth.getUser().then((res) => {
-      const u = res.data.user;
-      if (mounted) setUser(u ? toPublicFromSupabase(u) : null);
-    });
-    const { data: sub } = getSupabase().auth.onAuthStateChange((_event, session) => {
-      const u = session?.user || null;
-      setUser(u ? toPublicFromSupabase(u) : null);
-    });
+    let sub: { subscription: { unsubscribe: () => void } } | null = null;
+
+    try {
+      getSupabase().auth.getUser().then((res) => {
+        const u = res.data.user;
+        if (mounted) setUser(u ? toPublicFromSupabase(u) : null);
+      });
+      const { data } = getSupabase().auth.onAuthStateChange((_event, session) => {
+        const u = session?.user || null;
+        setUser(u ? toPublicFromSupabase(u) : null);
+      });
+      sub = data;
+    } catch (error) {
+      console.error("Supabase client not initialized in AuthProvider:", error);
+    }
+
     return () => {
       mounted = false;
       sub?.subscription.unsubscribe();
@@ -52,29 +60,45 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return {
       user,
       signup: async (name, email, phone, password) => {
-        const { data, error } = await getSupabase().auth.signUp({
-          email,
-          password,
-          options: { data: { name, phone } },
-        });
-        if (error) return { ok: false, error: error.message };
-        if (data.user) setUser(toPublicFromSupabase(data.user));
-        return { ok: true };
+        try {
+          const { data, error } = await getSupabase().auth.signUp({
+            email,
+            password,
+            options: { data: { name, phone } },
+          });
+          if (error) return { ok: false, error: error.message };
+          if (data.user) setUser(toPublicFromSupabase(data.user));
+          return { ok: true };
+        } catch (error: any) {
+           return { ok: false, error: error.message || "Supabase not initialized" };
+        }
       },
       login: async (email, password) => {
-        const { data, error } = await getSupabase().auth.signInWithPassword({ email, password });
-        if (error) return { ok: false, error: error.message };
-        if (data.user) setUser(toPublicFromSupabase(data.user));
-        return { ok: true };
+        try {
+          const { data, error } = await getSupabase().auth.signInWithPassword({ email, password });
+          if (error) return { ok: false, error: error.message };
+          if (data.user) setUser(toPublicFromSupabase(data.user));
+          return { ok: true };
+        } catch (error: any) {
+           return { ok: false, error: error.message || "Supabase not initialized" };
+        }
       },
       logout: () => {
-        getSupabase().auth.signOut();
-        setUser(null);
+        try {
+          getSupabase().auth.signOut();
+          setUser(null);
+        } catch (error) {
+          console.error("Supabase not initialized", error);
+        }
       },
       resetPassword: async (email) => {
-        const { error } = await getSupabase().auth.resetPasswordForEmail(email);
-        if (error) return { ok: false, error: error.message };
-        return { ok: true };
+        try {
+          const { error } = await getSupabase().auth.resetPasswordForEmail(email);
+          if (error) return { ok: false, error: error.message };
+          return { ok: true };
+        } catch (error: any) {
+           return { ok: false, error: error.message || "Supabase not initialized" };
+        }
       },
     };
   }, [user]);

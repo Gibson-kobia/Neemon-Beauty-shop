@@ -1,12 +1,23 @@
 "use client";
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { products } from "../../lib/products";
+import { fetchProducts, type Product } from "../../lib/products";
 import { useCart } from "./cart-provider";
 
 export function CartDrawer() {
   const { items, isDrawerOpen, closeDrawer, setQty, removeItem } = useCart();
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    async function load() {
+      const p = await fetchProducts();
+      setProducts(p);
+    }
+    if (isDrawerOpen) {
+      load();
+    }
+  }, [isDrawerOpen]);
 
   useEffect(() => {
     if (!isDrawerOpen) return;

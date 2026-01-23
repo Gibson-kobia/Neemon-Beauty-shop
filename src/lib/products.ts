@@ -1,358 +1,82 @@
-import { Product } from "./types";
+import { Product, DBProduct, CategorySlug } from "./types";
+import { getSupabase } from "./supabase";
 
-export const products: Product[] = [
-  // Makeup
-  {
-    id: "maybelline-fit-me-220",
-    slug: "maybelline-fit-me-matte-poreless-220",
-    name: "Fit Me Matte + Poreless Foundation 220",
-    brand: "Maybelline",
-    category: "makeup",
-    priceKes: 1850,
-    image: "https://images-na.ssl-images-amazon.com/images/I/61vtQnuuF0L._SL1500_.jpg",
-    description: "Oil‑control foundation with natural matte finish.",
-    stock: 40,
-    rating: 0,
-    reviewsCount: 0,
-  },
-  {
-    id: "la-girl-pro-conceal-fawn",
-    slug: "la-girl-pro-conceal-fawn",
-    name: "Pro Conceal HD Concealer Fawn",
-    brand: "L.A Girl",
-    category: "makeup",
-    priceKes: 750,
-    image: "https://images-na.ssl-images-amazon.com/images/I/61d5v5lqHfL._SL1500_.jpg",
-    description: "Creamy concealer for highlighting and correcting.",
-    stock: 60,
-    rating: 0,
-    reviewsCount: 0,
-  },
-  {
-    id: "black-opal-stick-truly-topaz",
-    slug: "black-opal-true-color-stick-foundation-truly-topaz",
-    name: "True Color Stick Foundation Truly Topaz",
-    brand: "Black Opal",
-    category: "makeup",
-    priceKes: 2300,
-    image: "https://images-na.ssl-images-amazon.com/images/I/61Wss9Q0QML._SL1500_.jpg",
-    description: "Iconic stick foundation for deeper skin tones.",
-    stock: 25,
-    rating: 0,
-    reviewsCount: 0,
-  },
-  {
-    id: "huda-beauty-liquid-matte",
-    slug: "huda-beauty-liquid-matte-lipstick",
-    name: "Liquid Matte Lipstick",
-    brand: "Huda Beauty",
-    category: "makeup",
-    priceKes: 3800,
-    image: "https://images-na.ssl-images-amazon.com/images/I/61y7a0c4uXL._SL1500_.jpg",
-    description: "Long‑wear matte liquid lipstick.",
-    stock: 30,
-    rating: 0,
-    reviewsCount: 0,
-  },
-  {
-    id: "mac-matte-lipstick",
-    slug: "mac-matte-lipstick",
-    name: "Matte Lipstick",
-    brand: "MAC",
-    category: "makeup",
-    priceKes: 3200,
-    image: "https://images-na.ssl-images-amazon.com/images/I/61RJVtxlQcL._SL1500_.jpg",
-    description: "Classic matte bullet lipstick.",
-    stock: 35,
-    rating: 0,
-    reviewsCount: 0,
-  },
-  {
-    id: "beauty-of-joseon-lip-tint",
-    slug: "beauty-of-joseon-glow-lip-tint",
-    name: "Glow Lip Tint",
-    brand: "Beauty of Joseon",
-    category: "makeup",
-    priceKes: 1700,
-    image: "https://m.media-amazon.com/images/I/61z7C6u6VYL._SL1500_.jpg",
-    description: "Lightweight glossy tint.",
-    stock: 50,
-    rating: 0,
-    reviewsCount: 0,
-  },
-  {
-    id: "kiss-beauty-eyeshadow-palette",
-    slug: "kiss-beauty-eyeshadow-palette",
-    name: "Eyeshadow Palette",
-    brand: "Kiss Beauty",
-    category: "makeup",
-    priceKes: 1000,
-    image: "https://images-na.ssl-images-amazon.com/images/I/71O3VddOZ2L._SL1500_.jpg",
-    description: "Versatile palette for everyday glam.",
-    stock: 45,
-    rating: 0,
-    reviewsCount: 0,
-  },
+export type { Product };
 
-  // Skincare
-  {
-    id: "garnier-micellar-water",
-    slug: "garnier-micellar-cleansing-water",
-    name: "Micellar Cleansing Water",
-    brand: "Garnier",
-    category: "skincare",
-    priceKes: 1200,
-    image: "https://images-na.ssl-images-amazon.com/images/I/71eX4ZtPipL._SL1500_.jpg",
-    description: "Gentle, effective makeup remover.",
-    stock: 80,
-    rating: 0,
-    reviewsCount: 0,
-  },
-  {
-    id: "nivea-soft-cream",
-    slug: "nivea-soft-refreshingly-soft-cream",
-    name: "Soft Moisturizing Cream",
-    brand: "Nivea",
-    category: "skincare",
-    priceKes: 700,
-    image: "https://images-na.ssl-images-amazon.com/images/I/71uX%2Bvj0XPL._SL1500_.jpg",
-    description: "Everyday face and body moisturizer.",
-    stock: 120,
-    rating: 0,
-    reviewsCount: 0,
-  },
-  {
-    id: "vaseline-cocoa-glow-lotion",
-    slug: "vaseline-intensive-care-cocoa-glow-lotion",
-    name: "Cocoa Glow Lotion",
-    brand: "Vaseline",
-    category: "skincare",
-    priceKes: 800,
-    image: "https://images-na.ssl-images-amazon.com/images/I/71Gx1bHj3IL._SL1500_.jpg",
-    description: "Deep hydration with cocoa butter.",
-    stock: 90,
-    rating: 0,
-    reviewsCount: 0,
-  },
-  {
-    id: "simple-facial-cleanser",
-    slug: "simple-kind-to-skin-facial-wash",
-    name: "Kind To Skin Facial Cleanser",
-    brand: "Simple",
-    category: "skincare",
-    priceKes: 1000,
-    image: "https://images-na.ssl-images-amazon.com/images/I/61qj5a3g4QL._SL1500_.jpg",
-    description: "Gentle facial wash for sensitive skin.",
-    stock: 70,
-    rating: 0,
-    reviewsCount: 0,
-  },
-  {
-    id: "the-ordinary-niacinamide",
-    slug: "the-ordinary-niacinamide-10-zinc-1",
-    name: "Niacinamide 10% + Zinc 1% Serum",
-    brand: "The Ordinary",
-    category: "skincare",
-    priceKes: 2900,
-    image: "https://images-na.ssl-images-amazon.com/images/I/71VZeFZimQL._SL1500_.jpg",
-    description: "Serum for oil control and pores.",
-    stock: 50,
-    rating: 0,
-    reviewsCount: 0,
-  },
-  {
-    id: "cerave-moisturizing-cream",
-    slug: "cerave-moisturizing-cream",
-    name: "Moisturizing Cream",
-    brand: "CeraVe",
-    category: "skincare",
-    priceKes: 3000,
-    image: "https://images-na.ssl-images-amazon.com/images/I/71tWxuLOuKL._SL1500_.jpg",
-    description: "Rich moisturizer with ceramides.",
-    stock: 65,
-    rating: 0,
-    reviewsCount: 0,
-  },
-
-  // Hair Products
-  {
-    id: "dark-and-lovely-relaxer-kit",
-    slug: "dark-and-lovely-regular-relaxer-kit",
-    name: "Regular Relaxer Kit",
-    brand: "Dark & Lovely",
-    category: "hair",
-    priceKes: 900,
-    image: "https://images-na.ssl-images-amazon.com/images/I/71H%2B9kQ3yXL._SL1500_.jpg",
-    description: "Salon‑trusted relaxer kit.",
-    stock: 100,
-    rating: 0,
-    reviewsCount: 0,
-  },
-  {
-    id: "ors-olive-oil-hair-lotion",
-    slug: "ors-olive-oil-hair-lotion",
-    name: "Olive Oil Hair Lotion",
-    brand: "ORS",
-    category: "hair",
-    priceKes: 950,
-    image: "https://images-na.ssl-images-amazon.com/images/I/71ZLZ4QhZWL._SL1500_.jpg",
-    description: "Daily moisture with olive oil.",
-    stock: 80,
-    rating: 0,
-    reviewsCount: 0,
-  },
-  {
-    id: "eco-styler-olive-gel",
-    slug: "eco-styler-olive-oil-gel",
-    name: "Eco Styler Gel (Olive Oil)",
-    brand: "Eco Style",
-    category: "hair",
-    priceKes: 1100,
-    image: "https://images-na.ssl-images-amazon.com/images/I/71XQ3qgOZ5L._SL1500_.jpg",
-    description: "Strong hold olive oil styling gel.",
-    stock: 90,
-    rating: 0,
-    reviewsCount: 0,
-  },
-
-  // Perfumes
-  {
-    id: "lattafa-yara",
-    slug: "lattafa-yara-edp",
-    name: "Yara Eau de Parfum 100ml",
-    brand: "Lattafa",
-    category: "perfumes",
-    priceKes: 4800,
-    image: "https://images-na.ssl-images-amazon.com/images/I/71d3g3pD3zL._SL1500_.jpg",
-    description: "Soft gourmand‑floral fragrance.",
-    stock: 35,
-    rating: 0,
-    reviewsCount: 0,
-  },
-  {
-    id: "lattafa-asad",
-    slug: "lattafa-asad-edp",
-    name: "Asad Eau de Parfum 100ml",
-    brand: "Lattafa",
-    category: "perfumes",
-    priceKes: 5200,
-    image: "https://images-na.ssl-images-amazon.com/images/I/71p3S4JmRHL._SL1500_.jpg",
-    description: "Warm, spicy vanilla‑amber scent.",
-    stock: 40,
-    rating: 0,
-    reviewsCount: 0,
-  },
-  {
-    id: "ajmal-aristocrat",
-    slug: "ajmal-aristocrat-edp",
-    name: "Aristocrat Eau de Parfum 75ml",
-    brand: "Ajmal",
-    category: "perfumes",
-    priceKes: 7500,
-    image: "https://images-na.ssl-images-amazon.com/images/I/71rTnA2j3JL._SL1500_.jpg",
-    description: "Elegant fresh‑amber fragrance.",
-    stock: 20,
-    rating: 0,
-    reviewsCount: 0,
-  },
-  {
-    id: "emper-5th-avenue",
-    slug: "emper-fifth-avenue-edp",
-    name: "5th Avenue Eau de Parfum 100ml",
-    brand: "Emper",
-    category: "perfumes",
-    priceKes: 4200,
-    image: "https://images-na.ssl-images-amazon.com/images/I/71A5vHfA2bL._SL1500_.jpg",
-    description: "Modern floral‑woody scent.",
-    stock: 25,
-    rating: 0,
-    reviewsCount: 0,
-  },
-
-  // Beauty Tools
-  {
-    id: "makeup-brush-set-12pc",
-    slug: "premium-12pc-makeup-brush-set",
-    name: "Makeup Brush Set (12 pcs)",
-    brand: "Generic Tools",
-    category: "tools",
-    priceKes: 1800,
-    image: "https://images-na.ssl-images-amazon.com/images/I/71qUQWGWpDL._SL1500_.jpg",
-    description: "Full face synthetic brush set.",
-    stock: 60,
-    rating: 0,
-    reviewsCount: 0,
-  },
-  {
-    id: "beauty-blender-sponge",
-    slug: "teardrop-beauty-blender-sponge",
-    name: "Beauty Blender Sponge",
-    brand: "Generic Tools",
-    category: "tools",
-    priceKes: 600,
-    image: "https://images-na.ssl-images-amazon.com/images/I/61Y1YPWqsxL._SL1500_.jpg",
-    description: "Latex‑free blending sponge.",
-    stock: 150,
-    rating: 0,
-    reviewsCount: 0,
-  },
-  {
-    id: "artificial-eyelashes-pack",
-    slug: "ardell-demi-wispies-lashes",
-    name: "Artificial Eyelashes Pack",
-    brand: "Ardell",
-    category: "tools",
-    priceKes: 900,
-    image: "https://images-na.ssl-images-amazon.com/images/I/71M3ctNk6kL._SL1500_.jpg",
-    description: "Natural‑glam lash multipack.",
-    stock: 80,
-    rating: 0,
-    reviewsCount: 0,
-  },
-  {
-    id: "wig-cap-set",
-    slug: "nude-wig-cap-pack",
-    name: "Wig Cap Set",
-    brand: "Generic Tools",
-    category: "tools",
-    priceKes: 450,
-    image: "https://images-na.ssl-images-amazon.com/images/I/71xULICwhGL._SL1500_.jpg",
-    description: "Breathable wig caps set.",
-    stock: 120,
-    rating: 0,
-    reviewsCount: 0,
-  },
-  {
-    id: "hair-straightener-brush",
-    slug: "ionic-hair-straightener-brush",
-    name: "Hair Straightener Brush",
-    brand: "Generic Tools",
-    category: "tools",
-    priceKes: 3500,
-    image: "https://images-na.ssl-images-amazon.com/images/I/71JH9mEo8bL._SL1500_.jpg",
-    description: "Straightening brush for quick styling.",
-    stock: 35,
-    rating: 0,
-    reviewsCount: 0,
-  },
-];
-
-export function getProductBySlug(slug: string) {
-  return products.find((p) => p.slug === slug);
+// Mapper to convert DB Product to Frontend Product
+function mapDBProductToProduct(dbProduct: DBProduct): Product {
+  return {
+    id: dbProduct.id,
+    slug: dbProduct.slug,
+    name: dbProduct.name,
+    brand: dbProduct.brand,
+    category: dbProduct.category as CategorySlug,
+    priceKes: dbProduct.price,
+    image: dbProduct.image_url,
+    description: dbProduct.description,
+    stock: dbProduct.stock,
+    rating: dbProduct.rating,
+    reviewsCount: dbProduct.reviews_count,
+  };
 }
 
-export function getProductsByCategory(category: string) {
-  return products.filter((p) => p.category === category);
+// --- ASYNC FUNCTIONS FOR SUPABASE ---
+
+export async function fetchProducts(): Promise<Product[]> {
+  try {
+    const supabase = getSupabase();
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .eq("is_active", true)
+      .gt("stock", 0);
+
+    if (error) {
+      console.error("Error fetching products:", error);
+      return [];
+    }
+
+    return (data || []).map(mapDBProductToProduct);
+  } catch (error) {
+    console.error("Supabase client not initialized:", error);
+    return [];
+  }
 }
 
-export function searchProducts(term: string) {
-  const query = term.trim().toLowerCase();
-  if (!query) return products;
-  return products.filter((p) => {
-    return (
-      p.name.toLowerCase().includes(query) ||
-      p.brand.toLowerCase().includes(query) ||
-      p.category.toLowerCase().includes(query)
-    );
-  });
+export async function fetchProductBySlug(slug: string): Promise<Product | null> {
+  try {
+    const supabase = getSupabase();
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .eq("slug", slug)
+      .eq("is_active", true)
+      .single();
+
+    if (error || !data) {
+      return null;
+    }
+    return mapDBProductToProduct(data);
+  } catch (error) {
+    console.error("Supabase client not initialized:", error);
+    return null;
+  }
+}
+
+export async function fetchProductsByCategory(category: string): Promise<Product[]> {
+  try {
+    const supabase = getSupabase();
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .eq("category", category)
+      .eq("is_active", true)
+      .gt("stock", 0);
+
+    if (error) return [];
+    return (data || []).map(mapDBProductToProduct);
+  } catch (error) {
+    console.error("Supabase client not initialized:", error);
+    return [];
+  }
 }

@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { products } from "../../lib/products";
+import { fetchProducts, type Product } from "../../lib/products";
 import { MapDeliverySelector } from "../../components/map-delivery-selector";
 import { useAuth } from "../../components/auth/auth-provider";
 import { getSupabase } from "../../lib/supabase";
@@ -20,6 +20,9 @@ export default function CheckoutPage() {
     const cartRaw = typeof window !== "undefined" ? localStorage.getItem("cart") : null;
     return cartRaw ? (JSON.parse(cartRaw) as CartItem[]) : [];
   });
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+  
   const [addressText, setAddressText] = useState("");
   const [deliveryMethod, setDeliveryMethod] = useState<"bodaboda" | "courier">("bodaboda");
   const [paymentMode, setPaymentMode] = useState<"mpesa" | "delivery">("mpesa");
@@ -46,6 +49,15 @@ export default function CheckoutPage() {
       .filter((a) => a.userId === user.id)
       .map(({ id, label, addressText }) => ({ id, label, addressText }));
   }, [user]);
+
+  useEffect(() => {
+    async function load() {
+      const p = await fetchProducts();
+      setProducts(p);
+      setLoadingProducts(false);
+    }
+    load();
+  }, []);
 
   useEffect(() => {
     const handleStorage = (e: StorageEvent) => {
@@ -107,23 +119,38 @@ export default function CheckoutPage() {
       setIsPaying(false);
     }
 
-    const order = {
-      id: `ORD-${crypto.randomUUID()}`,
-      total,
-      status: paymentMode === "mpesa" ? "Paid" : "Processing",
-      items: items.map((i) => ({
-        productId: i.product.id,
-        qty: i.qty,
-      })),
-      address_text: hasAddress ? addressText.trim() : null,
-      delivery_location: hasMap ? mapSelected : null,
-      created_at: new Date().toISOString(),
-      payment: paymentMode,
-      method: deliveryMethod,
+    const name = user?.name ?? "";
+    const email = user?.email ?? "";
+    const phone = paymentMode === "mpesa" ? mpesaPhone : (user?.phone || "");
+    const orderItems = items.map((i) => ({
+      product_id: i.product.id,
+      name: i.product.name,
+      qty: i.qty,
+      price: i.product.priceKes,
+    }));
+    const payload = {
       user_id: user ? user.id : null,
+      customer_name: name || "Guest",
+      customer_email: email || null,
+      customer_phone: phone || null,
+      items: orderItems,
+      total,
+      delivery_method: deliveryMethod,
+      status: "NEW",
+      delivery_location: hasMap ? mapSelected : null,
+      address_text: hasAddress ? addressText.trim() : null,
+      payment_method: paymentMode,
       mpesa_phone: paymentMode === "mpesa" ? mpesaPhone : null,
     };
-    const { error: insertError } = await getSupabase().from("orders").insert([order]);
+
+    console.log("CART_RAW", typeof window !== "undefined" ? localStorage.getItem("cart") : null);
+    console.log("CART_LINES", items);
+    console.log("ORDER_ITEMS", orderItems);
+    console.log("TOTAL", total);
+    console.log("PAYLOAD", payload);
+
+    const { data, error: insertError } = await getSupabase().from("orders").insert([payload]).select("*");
+    console.log("INSERT_RESULT", data, insertError);
     if (insertError) {
       setError(insertError.message);
       return;
@@ -314,7 +341,13 @@ export default function CheckoutPage() {
           
           <button
             onClick={placeOrder}
-            disabled={isPaying}
+            disabled={
+              isPaying ||
+              items.length === 0 ||
+              !deliveryMethod ||
+              !((user?.name ?? "").trim() && (user?.email ?? "").trim() && (paymentMode === "mpesa" ? mpesaPhone.trim() : (user?.phone ?? "").trim())) ||
+              !(addressText.trim().length > 0 || !!mapSelected)
+            }
             className="w-full sm:w-auto rounded-full px-8 py-3 bg-[color:var(--champagne-gold)] text-white font-medium hover:opacity-90 disabled:opacity-70 disabled:cursor-not-allowed transition-all"
           >
             {isPaying

@@ -5,7 +5,7 @@ import Image from "next/image";
 import { CartProvider, useCart } from "./cart/cart-provider";
 import { AuthProvider, useAuth } from "./auth/auth-provider";
 import { CartDrawer } from "./cart/cart-drawer";
-import { products } from "../lib/products";
+import { fetchProducts, type Product } from "../lib/products";
 
 import { useRouter } from "next/navigation";
 
@@ -29,6 +29,16 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
 
 function CartButton() {
   const { count, openDrawer, items } = useCart();
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    async function load() {
+      const p = await fetchProducts();
+      setProducts(p);
+    }
+    load();
+  }, []);
+
   const lines = items
     .map((i) => ({ ...i, product: products.find((p) => p.id === i.productId) }))
     .filter((l) => l.product)

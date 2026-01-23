@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { products } from "../../lib/products";
+import { fetchProducts, type Product } from "../../lib/products";
 import { useAuth } from "../../components/auth/auth-provider";
 import { getSupabase } from "../../lib/supabase";
 
@@ -60,6 +60,15 @@ export default function AccountPage() {
     return user ? all.filter((r) => r.userId === user.id) : [];
   });
   const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    async function load() {
+      const p = await fetchProducts();
+      setProducts(p);
+    }
+    load();
+  }, []);
 
   useEffect(() => {
     const onStorage = (e: StorageEvent) => {

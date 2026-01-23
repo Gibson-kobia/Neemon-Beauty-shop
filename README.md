@@ -1,5 +1,16 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Environment Variables
+
+This project uses Supabase for the backend. You must set the following environment variables in `.env.local` for local development, or in your deployment platform (e.g., Netlify/Vercel) settings:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=your_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+```
+
+If these are missing, the application will build but fail at runtime with connection errors.
+
 ## Getting Started
 
 First, run the development server:

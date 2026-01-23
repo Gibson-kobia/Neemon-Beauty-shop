@@ -1,13 +1,25 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { products } from "../../lib/products";
+import { fetchProducts, type Product } from "../../lib/products";
 import { useCart } from "../../components/cart/cart-provider";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 
 export default function CartPage() {
   const { items: cart, setQty, removeItem, addItem } = useCart();
   const [delivery, setDelivery] = useState<"nairobi" | "kenya">("nairobi");
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      const data = await fetchProducts();
+      setProducts(data);
+      setLoading(false);
+    }
+    load();
+  }, []);
+
   const blur = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'><rect width='100%' height='100%' fill='%23f5e7c6'/></svg>";
 
   const items = cart

@@ -4,8 +4,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { products } from "../lib/products";
-import { Product } from "../lib/types";
+import { fetchProducts, type Product } from "../lib/products";
 
 export function SearchInput({ className }: { className?: string }) {
   const blur = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'><rect width='100%' height='100%' fill='%23f5e7c6'/></svg>";
@@ -13,6 +12,15 @@ export function SearchInput({ className }: { className?: string }) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    async function load() {
+      const p = await fetchProducts();
+      setProducts(p);
+    }
+    load();
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

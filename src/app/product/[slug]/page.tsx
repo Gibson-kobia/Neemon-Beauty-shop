@@ -2,19 +2,47 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getProductBySlug, products } from "../../../lib/products";
+import { fetchProductBySlug, fetchProducts, type Product } from "../../../lib/products";
 import { AddToCartButton } from "../../../components/add-to-cart-button";
 import { AddToWishlistButton } from "../../../components/add-to-wishlist-button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function ProductPage({ params }: { params: { slug: string } }) {
   const [imgError, setImgError] = useState(false);
-  const product = getProductBySlug(params.slug);
-  if (!product) return notFound();
+  const [product, setProduct] = useState<Product | null>(null);
+  const [related, setRelated] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const related = products
-    .filter((p) => p.category === product.category && p.id !== product.id)
-    .slice(0, 4);
+  useEffect(() => {
+    async function load() {
+      setLoading(true);
+      try {
+        const p = await fetchProductBySlug(params.slug);
+        setProduct(p);
+
+        if (p) {
+          // Fetch all products to find related ones
+          // Ideally we would have a specific fetchRelatedProducts API, but filtering client-side or fetching all is okay for now as per previous logic
+          const allProducts = await fetchProducts();
+          const rel = allProducts
+            .filter((item) => item.category === p.category && item.id !== p.id)
+            .slice(0, 4);
+          setRelated(rel);
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, [params.slug]);
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }
+
+  if (!product) return notFound();
   const blur = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'><rect width='100%' height='100%' fill='%23f5e7c6'/></svg>";
 
   return (
